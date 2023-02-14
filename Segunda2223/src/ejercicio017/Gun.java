@@ -13,40 +13,45 @@ import java.awt.Rectangle;
  *
  * @author alberto
  */
-public class Gun extends Rectangle{
+public class Gun{
     Color color;
     int velX; 
     static int Y = 525;
-
-   
-    public static int ANCHO = 30;
-    public static int ALTO = 10;
+    Rectangle arma;
+    Rectangle canon;
+    
     
     
     public Gun(){
-        super(280,525,30,10);
+        arma = new Rectangle(280,525,30,10);
+        canon = new Rectangle(arma.x + 10, arma.y - arma.height, 10,10);
         color = Color.ORANGE;
         velX = 10;
     }
     
     public void paint(Graphics g){
        g.setColor(color);
-       g.fillRect(x, y, width, height);
-       g.fillRect(x+width/2-5, y-10, 10, 10);
+       g.fillRect(arma.x, arma.y, arma.width, arma.height);
+       g.fillRect(canon.x, canon.y, canon.width, canon.height);
        g.setColor(Color.WHITE);
-       g.drawRect(x, y, width, height);
-       g.drawRect(x+width/2-5, y-10, 10, 10);
+       g.drawRect(arma.x, arma.y, arma.width, arma.height);
+       g.drawRect(canon.x, canon.y, canon.width, canon.height);
     }
     
     public void update(int velX){
-        if(velX < 0)
-            x += this.velX;
-        else
-            x -= this.velX;
+        if(velX < 0){
+            arma.x += this.velX;
+            canon.x += this.velX;
+        }
+        else{
+            arma.x -= this.velX;
+            canon.x -= this.velX;
+        }
     }
 
      public void setX(int x) {
-        this.x = x;
+        this.arma.x = x;
+        this.canon.x = arma.x + 10;
     }
     
  

@@ -28,6 +28,7 @@ public class Marcianitos extends Applet implements Runnable {
     Gun arma;
     Nave nave;
     List<Bala> balas = new ArrayList<Bala>();
+    List<Nave> naves = new ArrayList<Nave>();
     int cronometro = 0;
     int score;
     int scoreMax;
@@ -38,6 +39,8 @@ public class Marcianitos extends Applet implements Runnable {
         
         this.setSize(600, 600);
         arma = new Gun();
+        nave = new Nave();
+        naves.add(nave);
         imagen = this.createImage(600, 600); 
         noseve = imagen.getGraphics(); 
     }
@@ -51,10 +54,16 @@ public class Marcianitos extends Applet implements Runnable {
        noseve.fillRect(0, 0, 600, 600);
        tituloInicio();
        arma.paint(noseve);
+       paintNaves();
        paintBalas();
        gameOver();
        paintScore();
        g.drawImage(imagen, 0, 0, this);
+    }
+
+    private void paintNaves() {
+        for(Nave na: naves)
+            na.paint(noseve);
     }
 
     private void paintBalas() {
@@ -97,10 +106,9 @@ public class Marcianitos extends Applet implements Runnable {
     
     public void run(){
         while(true){
-            for(Bala ba : balas)
-                ba.update();
-            //loDeLasColumnas();
-            
+            cronometro++;
+            loDeLasBalas();
+            loDeLasNaves();
             repaint();
            
             try {
@@ -110,50 +118,63 @@ public class Marcianitos extends Applet implements Runnable {
         }
     }
 
-    private void loDeLasBalas() {
-       /* for(Column co : columns){
-            co.update();
-            if(co.getParteArriba().x == 300){
-                columns.add(new Column());
+    public void loDeLasBalas() {
+         for(Bala ba : balas){
+                ba.update();
+            if(ba.y <= 0){
+                balas.remove(ba);
                 break;
-            }
-            if(pajaro.intersects(co.getParteArriba())||
-                    pajaro.intersects(co.getParteAbajo())||
-                    pajaro.intersects(co.getBocaArriba())||
-                    pajaro.intersects(co.getBocaAbajo())){
-                pajaro.velY = 0;
-                repaint();
-                animacion.suspend();
-               break;
-           
-            }
-            if(co.getParteAbajo().x + co.getParteAbajo().width == pajaro.x - pajaro.width){
-                score++;
-            }
-            if(co.getParteAbajo().x + co.getParteAbajo().width <= 0){
-                columns.remove(co);
-                break;
+            } 
+            for(Nave na: naves){
+                if(na.intersects(ba)){
+                    na.setVida(na.getVida()-1);
+                    ba.setY(0);
+                }
+                if(na.getVida()<0){
+                    naves.remove(na);
+                    break;
+                }
+                
             }
             
             
-        }*/
+        }
+    }
+    public void loDeLasNaves(){
+       if(cronometro%5000 == 0){
+            naves.add(new Nave());
+                
+        }
+       
+        for(Nave na: naves){
+            na.update();
+            
+        }
+       
     }
     
     public void startNewGame(){
-        if(!animacion.isAlive())
-            animacion.start();
-        else
-            animacion.resume();
+        
         if(scoreMax < score)
             scoreMax = score;
         score = 0;
         arma = new Gun();
-        nave = new Nave();
+        naves.clear();
+        for(int i = 0; i < 4; i++)
+            for(int j = 0; j < 5; j ++)
+                if(i%2==0)
+                    naves.add(new Nave((3*j)+2 ,i));
+                else
+                    naves.add(new Nave((3*j),i));
+        
         this.setSize(600, 600);
         
         imagen = this.createImage(600, 600); 
         noseve = imagen.getGraphics(); 
-        
+        if(!animacion.isAlive())
+            animacion.start();
+        else
+            animacion.resume();
         
     }
     public boolean mouseDown(Event ev, int x, int y){
@@ -166,7 +187,7 @@ public class Marcianitos extends Applet implements Runnable {
     }
     
     public boolean mouseMove(Event ev, int x, int y){
-        arma.setX(x - arma.width/2);
+        arma.setX(x - arma.arma.width/2);
         
         return true;
     }
@@ -179,7 +200,7 @@ public class Marcianitos extends Applet implements Runnable {
         
         if(tecla == 32){//barra espaciadora
             if(animacion.isAlive()){
-                balas.add(new Bala((int)(arma.getX())+ arma.width/2));
+                balas.add(new Bala((int)(arma.canon.getX())+ arma.canon.width/2));
                 return true;
        }
       

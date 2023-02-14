@@ -18,11 +18,15 @@ public class Bala extends Rectangle {
 
     
     public Bala(int x){
-        super(x, Gun.Y, 0, 0);
+        super(x-1, Gun.Y, 0, 0);
         this.height = RADIO;
         this.width = RADIO;
         
         
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
     public void paint(Graphics gg){
         gg.setColor(color);
