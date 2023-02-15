@@ -15,7 +15,7 @@ public class Nave extends Rectangle {
     public static final int ANCHURA = 38;
     public static final int ALTURA = 20;
     public static final Color COLORES []= {Color.DARK_GRAY, Color.LIGHT_GRAY, Color.WHITE};
-    int posicionX[] = {2, 41, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440, 480, 521, 560};
+    int posicionX[] = {50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550};
     int randomX = (int)(Math.random()*posicionX.length);
     int contadorAnimacion = 0;
     int contador = 0;
@@ -37,7 +37,7 @@ public class Nave extends Rectangle {
      public Nave(int x, int y){
         super(0,0,0, 0);
         this.x = posicionX[x];
-        this.y = y*30;
+        this.y = y * 2 * ALTURA;
         this.width = ANCHURA;
         this.height = ALTURA;
         vida = 2;

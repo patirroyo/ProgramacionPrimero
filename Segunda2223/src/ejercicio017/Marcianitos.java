@@ -29,46 +29,96 @@ public class Marcianitos extends Applet implements Runnable {
     Nave nave;
     List<Bala> balas = new ArrayList<Bala>();
     List<Nave> naves = new ArrayList<Nave>();
+    List<Bomba> bombas = new ArrayList<Bomba>();
     int cronometro = 0;
     int score;
     int scoreMax;
+    int contadorFilaNaves = 1;
+    Bala cargador = new Bala(550, 570);
+    int cartuchos = 10;
+    boolean gameOver = false;
+    boolean win = false;
     
     public void init(){
         score = 0;
         scoreMax = 0;
-        
         this.setSize(600, 600);
         arma = new Gun();
-        nave = new Nave();
-        naves.add(nave);
+        iniciarNaves();
         imagen = this.createImage(600, 600); 
         noseve = imagen.getGraphics(); 
     }
     public void start(){
-        animacion = new Thread(this);//lo instanciamos y le pasamos this (el frame)
-        //animacion.start();//es el que llama a ejecutar el método run
+        animacion = new Thread(this);
     }
     
     public void paint(Graphics g){
        noseve.setColor(Color.BLACK);
        noseve.fillRect(0, 0, 600, 600);
+       noseve.setColor(Color.WHITE);
+       noseve.drawLine(0, (int)(arma.arma.getY() + arma.arma.height),
+               600, (int)(arma.arma.getY() + arma.arma.height));
        tituloInicio();
        arma.paint(noseve);
        paintNaves();
        paintBalas();
-       gameOver();
+       paintBombas();
        paintScore();
+       paintGameOver();
+       paintWin();
        g.drawImage(imagen, 0, 0, this);
     }
 
+    public void startNewGame(){
+        if(scoreMax < score)
+            scoreMax = score;
+        score = 0;
+        arma = new Gun();
+        naves = new ArrayList<Nave>();
+        bombas = new ArrayList<Bomba>();
+        balas.clear();
+        iniciarNaves();
+        this.setSize(600, 600);
+        imagen = this.createImage(600, 600); 
+        noseve = imagen.getGraphics();
+        gameOver = false;
+        win = false;
+        if(!animacion.isAlive())
+            animacion.start();
+        else
+            animacion.resume();
+    }
+    private void paintGameOver() {
+        if(gameOver){
+            noseve.setColor(Color.RED);
+            noseve.drawString("GAME OVER ", 240, 275);
+            noseve.drawString("Para reiniciar pulsa ENTER", 225, 305);
+        }
+    }
+    private void paintWin() {
+        if(win){
+            noseve.setColor(Color.YELLOW);
+            noseve.drawString("HAS GANADO ", 240, 275);
+            noseve.drawString("Para reiniciar pulsa ENTER", 225, 305);
+        }
+    }
     private void paintNaves() {
         for(Nave na: naves)
             na.paint(noseve);
+    }
+    
+    private void paintBombas() {
+        if(!bombas.isEmpty())
+            for(Bomba bo: bombas)
+                bo.paint(noseve);
     }
 
     private void paintBalas() {
         for(Bala ba : balas)
             ba.paint(noseve);
+        cargador.paint(noseve);
+        noseve.setColor(Color.WHITE);
+        noseve.drawString(Integer.toString(cartuchos-balas.size()), 560, 575);
     }
 
     private void paintScore() {
@@ -78,16 +128,15 @@ public class Marcianitos extends Applet implements Runnable {
     }
 
     private void gameOver() {
-        /*if(pajaro.velY == 0){
-          noseve.setColor(Color.WHITE); 
-          if(pajaro.y >= 250){
-            noseve.drawString("GAME OVER ", 235, pajaro.y- 175 );
-            noseve.drawString("Para reiniciar pulsa ENTER", 220, pajaro.y- 150);
-          }else{
-              noseve.drawString("GAME OVER ", 235, pajaro.y + 155 );
-              noseve.drawString("Para reiniciar pulsa ENTER", 220, pajaro.y + 175);
-          }  
-        }*/
+          gameOver = true;
+          repaint();
+          animacion.suspend();
+    }
+    
+    private void win() {
+          win = true;
+          repaint();
+          animacion.suspend();
     }
 
     private void tituloInicio() {
@@ -109,8 +158,8 @@ public class Marcianitos extends Applet implements Runnable {
             cronometro++;
             loDeLasBalas();
             loDeLasNaves();
+            loDeLasBombas();
             repaint();
-           
             try {
                 Thread.sleep(velocidad);
             } catch (InterruptedException ex){
@@ -128,57 +177,69 @@ public class Marcianitos extends Applet implements Runnable {
             for(Nave na: naves){
                 if(na.intersects(ba)){
                     na.setVida(na.getVida()-1);
+                    ba.color = Color.BLACK;
                     ba.setY(0);
+                    score++;
                 }
-                if(na.getVida()<0){
+                if(na.getVida()< 0){
                     naves.remove(na);
+                    if(naves.isEmpty())
+                        win();
                     break;
                 }
-                
-            }
-            
-            
+            }  
         }
-    }
-    public void loDeLasNaves(){
-       if(cronometro%5000 == 0){
-            naves.add(new Nave());
-                
-        }
-       
-        for(Nave na: naves){
-            na.update();
-            
-        }
-       
     }
     
-    public void startNewGame(){
+    public void loDeLasBombas() {
+        for(Bomba bo : bombas){
+            bo.update();
+            if(bo.y >= arma.arma.y + arma.arma.height){
+                bombas.remove(bo);
+                break;
+            } 
+            if(bo.intersects(arma.arma)||bo.intersects(arma.canon)){
+                gameOver();
+                break;
+            }
+        }
+    }  
         
-        if(scoreMax < score)
-            scoreMax = score;
-        score = 0;
-        arma = new Gun();
-        naves.clear();
-        for(int i = 0; i < 4; i++)
-            for(int j = 0; j < 5; j ++)
-                if(i%2==0)
-                    naves.add(new Nave((3*j)+2 ,i));
+    public void loDeLasNaves(){
+       if(naves.isEmpty()){
+            win();
+       }else if(cronometro%1200 == 0){
+          for(int j = 0; j < 5; j ++){
+                if(contadorFilaNaves%2==0)
+                    naves.add(new Nave(2*j, 0));
                 else
-                    naves.add(new Nave((3*j),i));
-        
-        this.setSize(600, 600);
-        
-        imagen = this.createImage(600, 600); 
-        noseve = imagen.getGraphics(); 
-        if(!animacion.isAlive())
-            animacion.start();
-        else
-            animacion.resume();
-        
+                    naves.add(new Nave(2*j +1, 0)); 
+            }
+          contadorFilaNaves++;
+        }
+        for(Nave na: naves){
+            na.update();
+            if((int)(Math.random()*10000) == 2){
+                bombas.add(new Bomba(na.x+na.width/2,na.y+na.height));
+            }
+       
+            if(arma.canon.intersects(na)|| na.intersects(arma.canon)||
+               na.getY() >= arma.arma.getY())
+                gameOver();   
+        }
+    }
+
+    private void iniciarNaves() {
+        for(int i = 0; i < 5; i++)
+            for(int j = 0; j < 5; j ++){
+                if(i%2==0)
+                    naves.add(new Nave(2*j, i));
+                else
+                    naves.add(new Nave(2*j +1 ,i));
+            }
     }
     public boolean mouseDown(Event ev, int x, int y){
-       if(animacion.isAlive()){
+       if(animacion.isAlive()&& balas.size()<cartuchos){
            balas.add(new Bala(x));
            return true;
        }
@@ -199,19 +260,16 @@ public class Marcianitos extends Applet implements Runnable {
             arma.update(-1);
         
         if(tecla == 32){//barra espaciadora
-            if(animacion.isAlive()){
+            if(animacion.isAlive()&& balas.size()<cartuchos){
                 balas.add(new Bala((int)(arma.canon.getX())+ arma.canon.width/2));
                 return true;
-       }
-      
-       }
-       if(tecla == 10){
-            startNewGame();
-            return true;
-           
-       }
-       
-       return false;
+            }
+        }
+        if(tecla == 10){
+             startNewGame();
+             return true;
+        }
+        return false;
     }
 }    
 

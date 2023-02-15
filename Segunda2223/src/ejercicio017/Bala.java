@@ -20,9 +20,13 @@ public class Bala extends Rectangle {
     public Bala(int x){
         super(x-1, Gun.Y, 0, 0);
         this.height = RADIO;
-        this.width = RADIO;
-        
-        
+        this.width = RADIO;    
+    }
+    
+    public Bala(int x, int y){
+        super(x, y, 0, 0);
+        this.height = RADIO;
+        this.width = RADIO;    
     }
 
     public void setY(int y) {
