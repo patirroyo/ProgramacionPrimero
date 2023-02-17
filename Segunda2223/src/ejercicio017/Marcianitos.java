@@ -35,7 +35,7 @@ public class Marcianitos extends Applet implements Runnable {
     int scoreMax;
     int contadorFilaNaves = 1;
     Bala cargador = new Bala(550, 570);
-    int cartuchos = 10;
+    int cartuchos = 20;
     boolean gameOver = false;
     boolean win = false;
     
@@ -76,7 +76,7 @@ public class Marcianitos extends Applet implements Runnable {
         arma = new Gun();
         naves = new ArrayList<Nave>();
         bombas = new ArrayList<Bomba>();
-        balas.clear();
+        balas = new ArrayList<Bala>();
         iniciarNaves();
         this.setSize(600, 600);
         imagen = this.createImage(600, 600); 
@@ -187,7 +187,13 @@ public class Marcianitos extends Applet implements Runnable {
                         win();
                     break;
                 }
-            }  
+            }
+            for(Bomba bo :bombas)
+                if(bo.intersects(ba)){
+                    ba.setY(0);
+                    bombas.remove(bo);
+                    break;
+                }
         }
     }
     
@@ -239,7 +245,7 @@ public class Marcianitos extends Applet implements Runnable {
             }
     }
     public boolean mouseDown(Event ev, int x, int y){
-       if(animacion.isAlive()&& balas.size()<cartuchos){
+       if((!win || !gameOver ) && balas.size()<cartuchos){
            balas.add(new Bala(x));
            return true;
        }
@@ -254,13 +260,14 @@ public class Marcianitos extends Applet implements Runnable {
     }
     
     public boolean keyDown(Event ev, int tecla){
+       if(!win || !gameOver){
         if(tecla == 1006)
             arma.update(1);
         if(tecla == 1007)
             arma.update(-1);
         
         if(tecla == 32){//barra espaciadora
-            if(animacion.isAlive()&& balas.size()<cartuchos){
+            if((!win || !gameOver) && balas.size()<cartuchos){
                 balas.add(new Bala((int)(arma.canon.getX())+ arma.canon.width/2));
                 return true;
             }
@@ -269,6 +276,7 @@ public class Marcianitos extends Applet implements Runnable {
              startNewGame();
              return true;
         }
+       }
         return false;
     }
 }    
