@@ -58,15 +58,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     }
     public void run(){
         while(true){
-            rana.update();
-            if(rana.y < 0 - rana.height){
-                rana.y = 590;
-                score++;
-                cantidadCoches--;
-            }
-            if(cantidadCoches == 10)
-                win();
-                
+            loDeLaRana();   
             loDeLosCoches();
             repaint();
             try {
@@ -75,6 +67,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
             }
         }
     }
+    
     public boolean keyDown(Event ev, int tecla){
        if(!win || !gameOver){
             switch(tecla){
@@ -106,11 +99,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
         rana = new Rana();
         coches = new ArrayList<Coche>();
         iniciarCoches();
-        this.setSize(600, 600);
-        imagen = this.createImage(600, 600); 
-        noseve = imagen.getGraphics();
         paintBoard();
-        
         gameOver = false;
         win = false;
         if(!animacion.isAlive())
@@ -120,10 +109,10 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     }
     private void tituloInicio() {
         if(!animacion.isAlive()){
-            noseve.setColor(Color.GREEN);
+            noseve.setColor(Color.BLACK);
             noseve.setFont(new Font("Arial", Font.BOLD, 20));
-            noseve.drawString("Para jugar o para ", 205, 250);
-            noseve.drawString("reiniciar pulsa ENTER", 200, 275);
+            noseve.drawString("Para jugar o para ", 205, 300);
+            noseve.drawString("reiniciar pulsa ENTER", 200, 325);
         }
     }
 
@@ -132,13 +121,24 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
             coches.add(new Coche(i));
     }
     
+    private void loDeLaRana() {
+        rana.update();
+        if(rana.y < 0 - rana.height){
+            rana.y = 590;
+            score++;
+            cantidadCoches -= 2;
+        }
+        if(cantidadCoches <= 10)
+            win();
+    }
+    
     private void pintarCoches() {
         if(!coches.isEmpty())
             for(Coche co: coches)
                 co.paint(noseve);
     }
     private void loDeLosCoches() {
-        if((int)(Math.random() * cantidadCoches) == 1)
+        if((int)(Math.random() * cantidadCoches) == 0)
             coches.add(new Coche((int)(Math.random()*6)));
         if(!coches.isEmpty()){
             for(Coche co : coches){
@@ -156,6 +156,9 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
         }
     }
     private void paintBoard() {
+        this.setSize(600, 600);
+        imagen = this.createImage(600, 600); 
+        noseve = imagen.getGraphics();
         noseve.setColor(Color.CYAN);
         noseve.fillRect(0, 0, 600, 600);
         noseve.setColor(Color.LIGHT_GRAY);
@@ -180,6 +183,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     }
    private void paintScore() {
         noseve.setColor(Color.BLACK);
+        noseve.setFont(new Font("Arial", Font.BOLD, 14));
         noseve.drawString("SCORE: " + Integer.toString(score), 20, 580);
         noseve.drawString("MAX: " + Integer.toString(scoreMax), 20, 560);
     }
@@ -190,9 +194,10 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     }
     private void paintGameOver() {
         if(gameOver){
+            noseve.setFont(new Font("Arial", Font.BOLD, 20));
             noseve.setColor(Color.BLACK);
-            noseve.drawString("GAME OVER ", 250, 275);
-            noseve.drawString("Para reiniciar pulsa ENTER", 225, 305);
+            noseve.drawString("GAME OVER ", 250, 300);
+            noseve.drawString("Para reiniciar pulsa ENTER", 225, 325);
         }
     }
     private void win() {
@@ -202,9 +207,10 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     }
     private void paintWin() {
         if(win){
+            noseve.setFont(new Font("Arial", Font.BOLD, 20));
             noseve.setColor(Color.BLACK);
-            noseve.drawString("HAS GANADO ", 250, 275);
-            noseve.drawString("Para reiniciar pulsa ENTER", 225, 305);
+            noseve.drawString("HAS GANADO ", 250, 300);
+            noseve.drawString("Para reiniciar pulsa ENTER", 225, 325);
         }
     }
 }

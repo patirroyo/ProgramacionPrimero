@@ -29,7 +29,7 @@ public class Coche extends Rectangle{
            this.x = 0-((int)(Math.random()*100))-this.width;
        posY = y;
        color = colores[(int)(Math.random()*colores.length)];
-       velX = (int)(Math.random()*3)+1;
+       velX = (int)(Math.random()*4)+1;
     }
     
     public void paint(Graphics gg){
@@ -40,7 +40,12 @@ public class Coche extends Rectangle{
         gg.fillRoundRect(x+width-15, y+height-2, 10, 5, 5, 5);
         gg.setColor(color);
         gg.fill3DRect(x, y, width, height, true);
-        
+        gg.setColor(Color.CYAN);
+        gg.fillRect(x+2, y +1, 13, height-4);
+        gg.fillRect(x+width-15, y +1, 13, height-4);
+        gg.setColor(Color.BLACK);
+        gg.drawRect(x+2, y +1, 13, height-4);
+        gg.drawRect(x+width-15, y +1, 13, height-4);
         
     }
     public void update(){
