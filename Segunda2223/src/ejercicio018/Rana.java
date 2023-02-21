@@ -15,15 +15,16 @@ import java.awt.Rectangle;
  */
 public class Rana extends Rectangle{
     int vida;
-    public static final int ANCHURA = 40;
+    public static final int ANCHURA = 40; 
+//si pongo el static puedo acceder a él a través del nombre de la clase
     public static final int ALTURA = 35;
     public static final Color color = Color.GREEN;
     int contadorAnimacion = 0;
     int contador = 0;
-    static final int IZQUIERDA = -1;
-    static final int DERECHA = 1;
-    static final int ARRIBA = 2;
-    static final int ABAJO = 0;
+    static final int IZQUIERDA = 1006;
+    static final int DERECHA = 1007;
+    static final int ARRIBA = 1004;
+    static final int ABAJO = 1005;
     int posX;
    
     

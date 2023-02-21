@@ -70,20 +70,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
     
     public boolean keyDown(Event ev, int tecla){
        if(!win || !gameOver){
-            switch(tecla){
-                case 1006: //izquierda
-                    rana.update(Rana.IZQUIERDA);
-                    return true;
-                case 1007: //derecha
-                    rana.update(Rana.DERECHA);
-                    return true;
-                case 1004: //arriba
-                    rana.update(Rana.ARRIBA);
-                    return true;
-                case 1005://abajo
-                    rana.update(Rana.ABAJO);
-                    return true;
-            }
+            rana.update(tecla);
        }
         if(tecla == 10){//intro
             startNewGame();
@@ -147,7 +134,7 @@ public class FroggyCrossTheRoad extends Applet implements Runnable{
                     rana.vida--;
                     gameOver();
                 }
-                if(co.x <= -200 || co.x >=800){
+                if(co.x <= -250 || co.x >=850){
                     coches.remove(co);
                     break;
                 }

@@ -56,10 +56,13 @@ public class Coche extends Rectangle{
     }
     public void cocheChocon(List<Coche> coches){
       for(Coche co: coches){
-          if(this.intersects(co)){
-              this.velX = co.velX;
-              //this.x++;
-              break;
+          if(this.intersects(co) && !this.equals(co)){
+              //esto es para que no se compare consigomismo.
+                if(this.y < 300)
+                    this.x = co.x + co.width + 1;
+                else
+                    this.x = co.x - co.width - 1;
+                co.velX = this.velX;
           }
       }
               
