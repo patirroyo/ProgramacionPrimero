@@ -15,16 +15,18 @@ import java.awt.Rectangle;
  * @author alber
  */
 public class Raqueta extends Rectangle {
-    Color color;
-    int velY;
+    private Color color;
+    private int velY;
+    private int numero;
     
     public Raqueta(int numero){
         super(20,250,10,100);
         color = Color.YELLOW;
         velY = 30;
+        this.numero = numero;
         if(numero == 2){
-            this.x = 580;
-            this.color = Color.PINK;
+            this.x = 780 - this.width;
+            this.color = Color.BLUE;
         }
     }
     
@@ -33,12 +35,29 @@ public class Raqueta extends Rectangle {
     public void paint(Graphics gg){
         gg.setColor(color);
         gg.fillRect(x, y, width, height);
-        gg.setColor(Color.LIGHT_GRAY);
-        gg.drawRect(x, y, width, height);
-        
-        
+        if(numero == 2)
+            gg.setColor(Color.WHITE);
+        else
+            gg.setColor(Color.BLACK);
+        gg.drawRect(x, y, width, height);   
     }
     public void update(int direccion){
         y += (velY * direccion);
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getVelY() {
+        return velY;
+    }
+
+    public void setVelY(int velY) {
+        this.velY = velY;
     }
 }

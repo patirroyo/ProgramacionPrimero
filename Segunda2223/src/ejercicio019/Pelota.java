@@ -11,14 +11,14 @@ import java.awt.Rectangle;
 
 public class Pelota extends Rectangle {
     Color color = Color.LIGHT_GRAY;
-    int velX;
-    int velY;
+    private int velX;
+    private int velY;
     
     public Pelota(Color color){
-        super(290,290,20,20);
+        super(390,290,20,20);
         this.color = color;
-        velX = 3;
-        velY = -3;
+        velX = 4;
+        velY = -4;
         
     }
     
@@ -37,4 +37,29 @@ public class Pelota extends Rectangle {
         gg.setColor(Color.ORANGE);
         gg.drawOval(x, y, width, height);
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public int getVelX() {
+        return velX;
+    }
+
+    public void setVelX(int velX) {
+        this.velX = velX;
+    }
+
+    public int getVelY() {
+        return velY;
+    }
+
+    public void setVelY(int velY) {
+        this.velY = velY;
+    }
+    
 }
