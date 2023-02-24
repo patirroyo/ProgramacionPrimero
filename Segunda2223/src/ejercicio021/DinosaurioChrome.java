@@ -15,7 +15,7 @@ public class DinosaurioChrome extends Rectangle {
     boolean salto = false;
     
     public DinosaurioChrome(){
-        super(150, 450 - RADIO, RADIO/2, RADIO);
+        super(50, 450 - RADIO, RADIO/2, RADIO);
        
         
     }

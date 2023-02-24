@@ -36,6 +36,7 @@ public class Juego extends Applet implements Runnable {
     
     
     
+    
     public void init(){
         this.setSize(TAM_X, TAM_Y);
         dino = new DinosaurioChrome();
@@ -44,23 +45,17 @@ public class Juego extends Applet implements Runnable {
         noseve = imagen.getGraphics(); 
     }
     public void start(){
-        animacion = new Thread(this);//lo instanciamos y le pasamos this (el frame)
-        animacion.start();//es el que llama a ejecutar el método run
+        animacion = new Thread(this);
+        animacion.start();
     }
     
     public void paint(Graphics g){
-       noseve.setColor(Color.LIGHT_GRAY);
-       noseve.fillRect(0, 0, TAM_X, TAM_Y-150);
-       noseve.setColor(Color.DARK_GRAY);
-       noseve.fillRect(0, TAM_Y-150, TAM_X, 150);
-       
-       dino.paint(noseve); 
-       for(Piedras pi: piedras)
-           pi.paint(noseve);
-       noseve.setColor(Color.YELLOW);
-       noseve.drawString("Score: " + Integer.toString(score), 20, 580);
-       gameOver();
-       g.drawImage(imagen, 0, 0, this);
+        paintLandscape();
+        dino.paint(noseve); 
+        paintPiedras();
+        paintScore();
+        gameOver();
+        g.drawImage(imagen, 0, 0, this);
     }
     
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -70,21 +65,7 @@ public class Juego extends Applet implements Runnable {
     public void run(){
         while(true){
             timer++;
-            if(timer%100 == 0)
-                piedras.add(new Piedras());
-            for(Piedras pi: piedras){
-               pi.update();
-               if(pi.intersects(dino)){
-                   dino.vida--;
-                   piedras.clear();
-                   break;
-               }
-               if(pi.x + pi.width < dino.x){
-                   piedras.remove(pi);
-                   score++;
-               }
-                   
-            }
+            loDeLasPiedras();
             dino.update();
             repaint();
            
@@ -94,6 +75,7 @@ public class Juego extends Applet implements Runnable {
             }
         }
     }
+
    public boolean mouseDown(Event ev, int x, int y){
        if(dino.y == 450-dino.height){
            dino.saltar();
@@ -116,7 +98,42 @@ public class Juego extends Applet implements Runnable {
        
        return false;
     }
+    private void paintLandscape() {
+        noseve.setColor(Color.LIGHT_GRAY);
+        noseve.fillRect(0, 0, TAM_X, TAM_Y-150);
+        noseve.setColor(Color.DARK_GRAY);
+        noseve.fillRect(0, TAM_Y-150, TAM_X, 150);
+        noseve.setColor(Color.WHITE);  
+    }
+
+    private void paintPiedras() {
+        for(Piedras pi: piedras)
+            pi.paint(noseve);
+    }
+
+    private void paintScore() {
+        noseve.setColor(Color.YELLOW);
+        noseve.drawString("Score: " + Integer.toString(score), 20, 580);
+    }
     
+    private void loDeLasPiedras() {
+        if(timer%100 == 0)
+            piedras.add(new Piedras());
+        for(Piedras pi: piedras){
+            pi.update();
+            if(pi.intersects(dino)){
+                dino.vida--;
+                piedras.clear();
+                break;
+            }
+            if(pi.x + pi.width < 0){
+                score++;
+                piedras.remove(pi);
+                break;
+            }
+            
+        }
+    }
     private void gameOver() {
         if(gameOver){
             noseve.setFont(new Font("Arial", Font.BOLD, 20));
