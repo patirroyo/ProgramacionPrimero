@@ -9,10 +9,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-/**
- *
- * @author alberto
- */
 public class Pelota extends Rectangle {
     private Color [] colores = {Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.LIGHT_GRAY};
     private int velX;
@@ -22,24 +18,23 @@ public class Pelota extends Rectangle {
     public Pelota(){
         super(390,290,100,100);
         color = colores[(int)(Math.random()*colores.length)];
-        velX = (int)(Math.random()*4);
-        velY = (int)(Math.random()*4);
+        velX = (int)(Math.random()*7)-3;
+        velY = (int)(Math.random()*7)-3;
     }
     public Pelota(int x, int y, int dam){
         super(x,y,dam,dam);
         color = colores[(int)(Math.random()*colores.length)];
-        velX = (int)(Math.random()*4);
-        velY = (int)(Math.random()*4);
+        velX = (int)(Math.random()*7)-3;
+        velY = (int)(Math.random()*7)-3;
     }
     
     public void update(){ 
-        if(y >= (JugarPelota.getTAM_Y() - this.height)|| y <= 0)
-            velY = -velY;
-        if(x >= (JugarPelota.getTAM_X() - this.height)|| x <= 0)
-            velX = -velY;
-            
         x += velX;
-        y += velY;   
+        y += velY; 
+        if(y >= (500 - this.height)|| y <= 0)
+            velY = -velY;
+        if(x >= (500 - this.height)|| x <= 0)
+            velX = -velX; 
     }
     
     public void paint(Graphics gg){

@@ -8,6 +8,7 @@ package ejercicio020;
 import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Event;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 
 
 public class JugarPelota extends Applet implements Runnable {
-    int velocidad = 20;
+     static final int VELOCIDAD = 20;
     Thread animacion;
     Image imagen; 
     Graphics noseve;
@@ -24,6 +25,10 @@ public class JugarPelota extends Applet implements Runnable {
     private static int TAM_X = 500;
     private static int TAM_Y = 500;
     List<Pelota> pelotas;
+    Boolean win = false;
+    int timer = 0;
+    int segundos = 0;
+    int minutos = 0;
     
     
     
@@ -46,6 +51,13 @@ public class JugarPelota extends Applet implements Runnable {
        if(!pelotas.isEmpty())
             for(Pelota pl : pelotas)
                 pl.paint(noseve);
+       else
+           win = true;
+       noseve.setColor(Color.YELLOW);
+       noseve.drawString(Integer.toString(minutos) + " : " + 
+                        Integer.toString(segundos) + " : " + 
+                        Integer.toString(timer*2), 20, 480);
+       win();
        g.drawImage(imagen, 0, 0, this);
     }
     
@@ -55,13 +67,23 @@ public class JugarPelota extends Applet implements Runnable {
     
     public void run(){
         while(true){
+            timer++;
+            if(timer*VELOCIDAD == 800){//ajustado para que mas o menos coincida con el reloj; 
+                //se debería usar un objeto de la clase Date para obtener los segundos y que fuera fiable
+                segundos++;
+                timer = 0;
+            }
+            if(segundos == 60){
+                minutos++;
+                segundos = 0;
+            }
             if(!pelotas.isEmpty())
                 for(Pelota pl : pelotas)
                     pl.update();
             repaint();
            
             try {
-                Thread.sleep(velocidad);
+                Thread.sleep(VELOCIDAD);
             } catch (InterruptedException ex){
             }
         }
@@ -69,14 +91,28 @@ public class JugarPelota extends Applet implements Runnable {
     public boolean mouseDown(Event ev, int x, int y){
        for(Pelota pl : pelotas)
             if(pl.contains(x, y)){
-                pelotas.add(new Pelota(x-pl.width/2, y-pl.height/2, pl.width/2));
-                pelotas.add(new Pelota(x+pl.width/2, y + pl.height/2, pl.width/2));
+                if(pl.width > 15){
+                    pelotas.add(new Pelota(x-pl.width/4, y - pl.height/4, pl.width/2));
+                    pelotas.add(new Pelota(x+pl.width/4, y + pl.height/4, pl.width/2));
+                }
                 pelotas.remove(pl);
                 break;
                 
             }
        return false;
          
+    }
+    
+    private void win() {
+        if(win){
+            noseve.setFont(new Font("Arial", Font.BOLD, 20));
+            noseve.setColor(Color.WHITE);
+            noseve.drawString("HAS GANADO ", 150, 200);
+            noseve.drawString("Tiempo: " + Integer.toString(minutos) + " : " + 
+                        Integer.toString(segundos) + " : " + 
+                        Integer.toString(timer*2), 125, 225);
+            animacion.stop();
+        }
     }
 
     public static int getTAM_X() {
