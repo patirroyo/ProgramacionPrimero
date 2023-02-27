@@ -5,22 +5,19 @@
  */
 package ejercicio021;
 
-/**
- *
- * @author alber
- */
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Random;
 
 public class Piedras extends Rectangle {
-    Color color = Color.BLACK;
-    int velX = -4;
-    
-   
+    Random random = new Random();
+    Color color = new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)); ;
+    int velX = -4;  
     
     public Piedras(){
-        super(600, 438, 15, 12);
+        super(Juego.POS_INI_X, 438, 15, 12);
         switch ((int)(Math.random()*4)){
             case 0:
                 this.height *= 2;
@@ -36,10 +33,7 @@ public class Piedras extends Rectangle {
         }
         
     }
-    
-    
-    
-     
+
     public void paint(Graphics gg){
         gg.setColor(color);
         gg.fill3DRect(x, y, width, height, true);

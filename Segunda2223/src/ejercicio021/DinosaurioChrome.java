@@ -9,11 +9,11 @@ import java.awt.Rectangle;
 
 public class DinosaurioChrome extends Rectangle {
     public static final int RADIO = 80;
-    public int velY = 3;
+    public int velY = 4;
     int vida = 3;
     int contador;
-    boolean salto = false;
-    
+    private boolean salto = false;
+
     public DinosaurioChrome(){
         super(50, 450 - RADIO, RADIO/2, RADIO);
        
@@ -21,9 +21,9 @@ public class DinosaurioChrome extends Rectangle {
     }
     public void paint(Graphics gg){
         gg.setColor(Color.RED);
-        gg.fillRect(x, y, width, height);
+        gg.fillOval(x, y, width, height);
         gg.setColor(Color.BLACK);
-        gg.drawRect(x, y, width, height);
+        gg.drawOval(x, y, width, height);
         
     }
     public void update(){
@@ -39,20 +39,22 @@ public class DinosaurioChrome extends Rectangle {
                 height = RADIO/2;
                 break;
             case 0:
+                width *= 2;
+                height /= 2;
+                y = 450 - height;
                 Juego.gameOver = true;
         }
         if(salto){
             switch (contador){
-                case 40:
+                case 35:
                     y--;
-                    velY = -3;
-                    
+                    velY = -velY;
                     break;
                 case 20:
                     velY = 0;
                     break;
-                case 10:
-                    velY = 3;
+                case 15:
+                    velY = 4;
                     break;
                 case 0:
                     salto = false;
@@ -61,7 +63,7 @@ public class DinosaurioChrome extends Rectangle {
         }
     }
     public void saltar() {
-        contador = 40;
+        contador = 35;
         salto = true;
     }
 }
