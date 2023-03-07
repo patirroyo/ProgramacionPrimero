@@ -142,7 +142,7 @@ public class Examen extends Applet implements Runnable {
     }
     public boolean mouseUp(Event ev, int x, int y){
         for(CuadradoMovil cm : cuadradosArriba){
-            if(cm.contains(x, y) && cm.color == actual.getColor()){
+            if(actual != null && cm.contains(x, y) && cm.color == actual.getColor()){
                lineas.add(new DosPuntos(actual.getPosIniX(), actual.getPosIniY(), cm));
                actual = null;
                repaint();
