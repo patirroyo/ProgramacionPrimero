@@ -6,6 +6,7 @@
 package Ejercicio01;
 
 import java.applet.Applet;
+import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -32,4 +33,5 @@ public class DibujoAnimado {
         else
             actual = 0;
     }
+    
 }

@@ -14,7 +14,7 @@ import java.awt.*;
 public class Caminando extends Applet implements Runnable {
     public static final int FILAS = 3;
     public static final int COLUMNAS = 4;
-    int delay = 5;
+    int delay = 100;
     Thread animacion;
     Image imagen; 
     Graphics noseve;
@@ -23,7 +23,7 @@ public class Caminando extends Applet implements Runnable {
     Image img;
     Image imagenes[][];
     String elementos[] = {"Guerrillero/g", "Hampon/h", "Vaquero/v"};
-    DibujoAnimado personaje1;
+    DibujoAnimado personaje;
     
     
     
@@ -45,8 +45,8 @@ public class Caminando extends Applet implements Runnable {
         //Cargamos las imágenes en el array bidimensional.
         for(int i = 0; i < 3; i++)
             for(int j = 0; j < 4; j++)
-                imagenes[i][j] = getImage(getCodeBase(), "Ejercicio01/Sprites/" + elementos[1] + (j+1) + ".gif");   
-        personaje1 = new DibujoAnimado(imagenes[1]);
+                imagenes[i][j] = getImage(getCodeBase(), "Ejercicio01/Sprites/" + elementos[i] + (j+1) + ".gif");   
+        personaje = new DibujoAnimado(imagenes[0]);
     }
     public void start(){
         animacion = new Thread(this);
@@ -56,10 +56,10 @@ public class Caminando extends Applet implements Runnable {
     public void paint(Graphics g){
        noseve.setColor(Color.WHITE);
        noseve.fillRect(0, 0, tamX, tamY);
-      // noseve.drawImage(img, 0, 0, this);
-       personaje1.paint(noseve, this);
       
-       //g.drawImage(imagenes[2][3], 0, 0, 200, 300, this);//200 anchura y 300 altura
+       personaje.paint(noseve, this);
+      
+       g.drawImage(imagen, 0, 0, 200, 300, this);//200 anchura y 300 altura
     }
     
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -69,7 +69,7 @@ public class Caminando extends Applet implements Runnable {
     
     public void run(){
         while(true){
-           personaje1.update();
+           personaje.update();
             repaint();
            
             try {
@@ -78,5 +78,22 @@ public class Caminando extends Applet implements Runnable {
             }
         }
     }
-    
+    public boolean keyDown(Event ev, int tecla){
+       if(tecla == 71 ){//g
+           personaje = null;
+           personaje = new DibujoAnimado(imagenes[0]);  
+           return true;
+       }
+       if(tecla == 72 ){//h
+           personaje = null;
+           personaje = new DibujoAnimado(imagenes[1]);  
+           return true;
+       }
+       if(tecla == 86 ){//v
+           personaje = null;
+           personaje = new DibujoAnimado(imagenes[2]);  
+           return true;
+       }
+       return false;
+    }
 }
