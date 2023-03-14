@@ -6,6 +6,7 @@ desde un objeto de la clase imagen para poder referenciarlos.
 package Ejercicio01;
 import java.applet.Applet;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.awt.*;
 public class Caminando extends Applet implements Runnable {
     public static final int FILAS = 3;
     public static final int COLUMNAS = 4;
-    int delay = 100;
+    int delay = 200;
     Thread animacion;
     Image imagen; 
     Graphics noseve;
@@ -23,7 +24,7 @@ public class Caminando extends Applet implements Runnable {
     Image img;
     Image imagenes[][];
     String elementos[] = {"Guerrillero/g", "Hampon/h", "Vaquero/v"};
-    DibujoAnimado personaje;
+    DibujoAnimado personaje;//declaro un dibujo animado para mostrarlo, reservo memoria.
     
     
     
@@ -46,6 +47,7 @@ public class Caminando extends Applet implements Runnable {
         for(int i = 0; i < 3; i++)
             for(int j = 0; j < 4; j++)
                 imagenes[i][j] = getImage(getCodeBase(), "Ejercicio01/Sprites/" + elementos[i] + (j+1) + ".gif");   
+        //instancio el personaje.
         personaje = new DibujoAnimado(imagenes[0]);
     }
     public void start(){
@@ -54,12 +56,12 @@ public class Caminando extends Applet implements Runnable {
     }
     
     public void paint(Graphics g){
-       noseve.setColor(Color.WHITE);
+       noseve.setColor(Color.BLACK);
        noseve.fillRect(0, 0, tamX, tamY);
-      
+       
        personaje.paint(noseve, this);
       
-       g.drawImage(imagen, 0, 0, 200, 300, this);//200 anchura y 300 altura
+       g.drawImage(imagen, 0, 0, tamX, tamY, this);//200 anchura y 300 altura
     }
     
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -69,7 +71,7 @@ public class Caminando extends Applet implements Runnable {
     
     public void run(){
         while(true){
-           personaje.update();
+            personaje.update();
             repaint();
            
             try {
@@ -79,21 +81,19 @@ public class Caminando extends Applet implements Runnable {
         }
     }
     public boolean keyDown(Event ev, int tecla){
-       if(tecla == 71 ){//g
-           personaje = null;
-           personaje = new DibujoAnimado(imagenes[0]);  
-           return true;
-       }
-       if(tecla == 72 ){//h
-           personaje = null;
-           personaje = new DibujoAnimado(imagenes[1]);  
-           return true;
-       }
-       if(tecla == 86 ){//v
-           personaje = null;
-           personaje = new DibujoAnimado(imagenes[2]);  
-           return true;
-       }
-       return false;
+        switch (tecla){
+            case KeyEvent.VK_G: //G 71
+                personaje.setImagenes(imagenes[0]);  
+                return true;
+
+            case KeyEvent.VK_H://H 72
+                personaje.setImagenes(imagenes[1]);  
+                 return true;
+
+            case KeyEvent.VK_V:// 86 v
+                personaje.setImagenes(imagenes[2]);
+                return true;
+        }
+        return false;
     }
 }

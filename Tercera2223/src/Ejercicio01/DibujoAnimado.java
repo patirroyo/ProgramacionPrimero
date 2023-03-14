@@ -15,8 +15,8 @@ import java.awt.Image;
  * @author alber
  */
 public class DibujoAnimado {
-    int actual = 0;
-    Image imagenes[];
+    int actual = 0;//indice para indicar la imagen que se está mostrando
+    private Image imagenes[];
    
     
     public DibujoAnimado(Image imagenes[]){
@@ -24,14 +24,15 @@ public class DibujoAnimado {
         
     }
     public void paint(Graphics g, Applet applet){
-        g.drawImage(imagenes[actual], 0, 0, applet);
+        g.drawImage(imagenes[actual], 0, 0, 200, 300, applet);
         
     }
     public void update(){
-        if(actual < 3)
-            actual++;
-        else
-            actual = 0;
+        actual = ++actual % imagenes.length;
+    }
+
+    public void setImagenes(Image[] imagenes) {
+        this.imagenes = imagenes;
     }
     
 }
