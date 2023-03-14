@@ -82,15 +82,15 @@ public class Caminando extends Applet implements Runnable {
     }
     public boolean keyDown(Event ev, int tecla){
         switch (tecla){
-            case KeyEvent.VK_G: //G 71
+            case KeyEvent.VK_G: case 103: //G 71
                 personaje.setImagenes(imagenes[0]);  
                 return true;
 
-            case KeyEvent.VK_H://H 72
+            case KeyEvent.VK_H: case 104://H 72
                 personaje.setImagenes(imagenes[1]);  
                  return true;
 
-            case KeyEvent.VK_V:// 86 v
+            case KeyEvent.VK_V: case 118:// 86 v
                 personaje.setImagenes(imagenes[2]);
                 return true;
         }

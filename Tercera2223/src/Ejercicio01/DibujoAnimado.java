@@ -31,6 +31,10 @@ public class DibujoAnimado {
         actual = ++actual % imagenes.length;
     }
 
+    public Image[] getImagenes() {
+        return imagenes;
+    }
+    
     public void setImagenes(Image[] imagenes) {
         this.imagenes = imagenes;
     }
