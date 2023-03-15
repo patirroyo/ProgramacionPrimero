@@ -13,14 +13,14 @@ import java.awt.event.KeyEvent;
  * @author alber
  */
 public class Caminando extends Applet implements Runnable {
-    public static final int FILAS = 3;
-    public static final int COLUMNAS = 4;
-    int delay = 200;
-    Thread animacion;
-    Image imagen; 
-    Graphics noseve;
-    public static int tamX = 600;
-    public static int tamY = 600;
+    public static final int ROWS = 3;
+    public static final int COLUMNS = 4;
+    private int delay = 200;
+    private Thread animacion;
+    private Image imagen; 
+    private Graphics noseve;
+    public final static int SIZEX = 600;
+    public final static int SIZEY = 600;
     Image img;
     Image imagenes[][];
     String elementos[] = {"Guerrillero/g", "Hampon/h", "Vaquero/v"};
@@ -30,9 +30,9 @@ public class Caminando extends Applet implements Runnable {
     
     
     public void init(){
-        this.setSize(tamX, tamY);
+        this.setSize(SIZEX, SIZEY);
        
-        imagen = this.createImage(tamX, tamY);
+        imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
         
         img = getImage(getCodeBase(), "Ejercicio01/Sprites/Guerrillero/g1.gif");
@@ -41,11 +41,11 @@ public class Caminando extends Applet implements Runnable {
         obtener el path), lo mete en una dirección de memoria ram y con el
         getImage accedemos a él.
         */
-        imagenes = new Image[FILAS][COLUMNAS];
+        imagenes = new Image[ROWS][COLUMNS];
         
         //Cargamos las imágenes en el array bidimensional.
-        for(int i = 0; i < 3; i++)
-            for(int j = 0; j < 4; j++)
+        for(int i = 0; i < ROWS; i++)
+            for(int j = 0; j < COLUMNS; j++)
                 imagenes[i][j] = getImage(getCodeBase(), "Ejercicio01/Sprites/" + elementos[i] + (j+1) + ".gif");   
         //instancio el personaje.
         personaje = new DibujoAnimado(imagenes[0]);
@@ -57,11 +57,11 @@ public class Caminando extends Applet implements Runnable {
     
     public void paint(Graphics g){
        noseve.setColor(Color.BLACK);
-       noseve.fillRect(0, 0, tamX, tamY);
+       noseve.fillRect(0, 0, SIZEX, SIZEY);
        
        personaje.paint(noseve, this);
       
-       g.drawImage(imagen, 0, 0, tamX, tamY, this);//200 anchura y 300 altura
+       g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
     
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -77,23 +77,29 @@ public class Caminando extends Applet implements Runnable {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException ex){
+                System.out.println("Error en el hilo");
             }
         }
     }
     public boolean keyDown(Event ev, int tecla){
+        final int KeyEvent_g = 103;
+        final int KeyEvent_h = 104;
+        final int KeyEvent_v = 118;
+        boolean isKeyDown = false;
         switch (tecla){
-            case KeyEvent.VK_G: case 103: //G 71
+            case KeyEvent.VK_G: case KeyEvent_g:
                 personaje.setImagenes(imagenes[0]);  
-                return true;
-
-            case KeyEvent.VK_H: case 104://H 72
+                isKeyDown = true;
+                break;
+            case KeyEvent.VK_H: case KeyEvent_h:
                 personaje.setImagenes(imagenes[1]);  
-                 return true;
-
-            case KeyEvent.VK_V: case 118:// 86 v
+                isKeyDown = true;
+                break;
+            case KeyEvent.VK_V: case KeyEvent_v:
                 personaje.setImagenes(imagenes[2]);
-                return true;
+                isKeyDown = true;
+                break;
         }
-        return false;
+        return isKeyDown;
     }
 }
