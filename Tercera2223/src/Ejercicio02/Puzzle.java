@@ -42,7 +42,9 @@ public class Puzzle extends Applet{
         //cargamos la imágenes y se las asignamos a las piezas con el método constructor.
         for(int i = 0; i < PIECES; i++){
             imagenes[i] = getImage(getCodeBase(), "Ejercicio02/directorioImagenes/" + (i+1) + ".png"); 
-            piezas[i] = new Pieza(imagenes[i]);
+            //en este ejemplo no hace falta el segundo atributo, pero así funcionan las dos clases
+            piezas[i] = new Pieza(imagenes[i], i); 
+
         }
         
         //creamos los lugares donde tienen que ir las piezas

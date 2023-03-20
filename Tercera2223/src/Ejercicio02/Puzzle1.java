@@ -42,7 +42,7 @@ public class Puzzle1 extends Applet{
         //cargamos la imágenes y se las asignamos a las piezas con el método constructor.
         for(int i = 0; i < PIECES; i++){
             imagenes[i] = getImage(getCodeBase(), "Ejercicio02/directorioImagenes/" + (i+1) + ".png"); 
-            piezas[i] = new Pieza(imagenes[i]);
+            piezas[i] = new Pieza(imagenes[i], i);
         }
         
         //creamos los lugares donde tienen que ir las piezas
@@ -99,16 +99,20 @@ public class Puzzle1 extends Applet{
         return true;
     }
     public boolean mouseUp(Event ev, int x, int y){//cuando haces click y sin soltar, mueves
-        if(actual != null){    
-            if(actual.intersects(sitios[posActual])){
-               actual.x = sitios[posActual].x;
-               actual.y = sitios[posActual].y;
-               actual.setOk();
-            } else{
-                actual.setX(actualIniX);
-                actual.setY(actualIniY);
-            }
+        if(actual != null){ 
+            for(int i = 0; i < ROWS; i++)
+                for(int j = 0; j < COLUMNS; j++){
+                    if(actual.getPosicion() == (i*ROWS + j)){
+                       actual.x = sitios[i][j].x;
+                       actual.y = sitios[i][j].y;
+                       actual.setOk();
+                    } else{
+                        actual.setX(actualIniX);
+                        actual.setY(actualIniY);
+                    }
+                }
             repaint();
+            actual = null;
         }
         return true;
     }
