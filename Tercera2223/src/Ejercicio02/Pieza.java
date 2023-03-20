@@ -30,12 +30,14 @@ public class Pieza extends Rectangle{
     }
     public void update(int x, int y){
         if(!ok){  
-            this.x = x;
-            this.y = y;
+            this.x = x - SIZE/2;
+            this.y = y - SIZE/2;
         }
     }
 
-
+    public void setOk() {
+        this.ok = true;
+    }
     public void setX(int x) {
         this.x = x;
     }
