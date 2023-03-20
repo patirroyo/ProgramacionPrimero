@@ -27,6 +27,7 @@ public class Puzzle extends Applet implements Runnable{
     private Image imagenes[];
     private Pieza piezas[];
     private Pieza actual;
+    private int posActual;
     private int actualIniX;
     private int actualIniY;
     private Rectangle[] sitios;
@@ -37,9 +38,8 @@ public class Puzzle extends Applet implements Runnable{
        
         imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
-        
-       
-        imagenes = new Image[PIECES];
+        //instanciamos las 25 imágnes
+       // imagenes = new Image[PIECES];
         piezas = new Pieza[PIECES];
         
         
@@ -97,6 +97,7 @@ public class Puzzle extends Applet implements Runnable{
         for(int i = 0; i < PIECES; i++){
            if(piezas[i].contains(x, y)){
                actual = piezas[i];
+               posActual = i;
                actualIniX = actual.x;
                actualIniY = actual.y;
                repaint();
@@ -117,16 +118,14 @@ public class Puzzle extends Applet implements Runnable{
         return true;
     }
     public boolean mouseUp(Event ev, int x, int y){//cuando haces click y sin soltar, mueves
-        for(int i = 0; i < PIECES; i++){
-            if(piezas[i].intersects(sitios[i])){
-               piezas[i].x = sitios[i].x;
-               piezas[i].y = sitios[i].y;
-               break;
-            } else{
-                actual.setX(actualIniX);
-                actual.setY(actualIniY);
-            }
+        if(actual.intersects(sitios[posActual])){
+           actual.x = sitios[posActual].x;
+           actual.y = sitios[posActual].y;
+        } else{
+            actual.setX(actualIniX);
+            actual.setY(actualIniY);
         }
+        
             
         repaint();
         
