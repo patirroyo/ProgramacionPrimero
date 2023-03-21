@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sound.sampled.Clip;
 
 /**
  *
@@ -26,7 +27,8 @@ public class Robin extends Applet implements Runnable {
     Arquero arquero;
     List<Flecha> flechas = new ArrayList<Flecha>();
     List<Globo> globos = new ArrayList<Globo>();
-    
+    private int contador = 0;
+    Clip boom;
     
     
     
@@ -42,6 +44,8 @@ public class Robin extends Applet implements Runnable {
         flecha = getImage(getCodeBase(), "Ejercicio03/Imagenes/flecha.png");
         globo = getImage(getCodeBase(), "Ejercicio03/Imagenes/globo.jpg");
         explota = getImage(getCodeBase(), "Ejercicio03/Imagenes/bang.jpg");
+        
+        //boom = AudioSystem.get
         
         arquero = new Arquero(robin);
         globos.add(new Globo(globo, explota));
@@ -74,8 +78,10 @@ public class Robin extends Applet implements Runnable {
     
     public void run(){
         while(true){
-            if((int)(Math.random()*100) == 0)
+            contador++;
+            if(contador%200 == 0)
                 globos.add(new Globo(globo, explota));
+            
             if(!flechas.isEmpty())
                 for(Flecha flecha : flechas){
                     flecha.update();

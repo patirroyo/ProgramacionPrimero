@@ -17,13 +17,14 @@ import java.awt.Rectangle;
 public class Globo extends Rectangle{
     private Image imagen;
     Image explosion; 
-    private int velY = -2;
+    private int velY;
     private boolean explotado = false;
     
     public Globo(Image img, Image explota){
         super(Robin.SIZEX - 150, Robin.SIZEY, 100, 100);
         imagen = img;
         explosion = explota;
+        velY = - ((int)(Math.random()*3) + 2);
     }
     public void paint(Graphics g, Applet applet){
         if(!explotado)
