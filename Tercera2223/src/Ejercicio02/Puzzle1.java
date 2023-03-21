@@ -50,7 +50,7 @@ public class Puzzle1 extends Applet{
         //les damos el lugar correcto
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLUMNS; j++)
-                sitios[i][j] = new Rectangle(j*Pieza.SIZE + 100, i*Pieza.SIZE + 150, Pieza.SIZE, Pieza.SIZE);
+                sitios[i][j] = new Rectangle(j*Pieza.SIZE, i*Pieza.SIZE, Pieza.SIZE, Pieza.SIZE);
         }
         
       
@@ -60,7 +60,7 @@ public class Puzzle1 extends Applet{
         noseve.setColor(Color.BLACK);
         noseve.fillRect(0, 0, SIZEX, SIZEY);
         //pintamos una imagen de referencia para ayudar
-        noseve.drawImage(getImage(getCodeBase(), "Ejercicio02/directorioImagenes/mapamundi3.png"), 100, 150, this);
+        //noseve.drawImage(getImage(getCodeBase(), "Ejercicio02/directorioImagenes/mapamundi3.png"), 100, 150, this);
         
         //pintamos las piezas y la cuadricula donde tienen que ir.
         for(int i = 0; i < PIECES; i++)
@@ -84,10 +84,9 @@ public class Puzzle1 extends Applet{
         for(int i = 0; i < PIECES; i++)
            if(piezas[i].contains(x, y)){
                actual = piezas[i];
-               posActual = i;
                actualIniX = actual.x;
                actualIniY = actual.y;
-               break;
+              // break;
            }
         return true;
     }
@@ -98,18 +97,15 @@ public class Puzzle1 extends Applet{
         }
         return true;
     }
-    public boolean mouseUp(Event ev, int x, int y){//cuando haces click y sin soltar, mueves
+    public boolean mouseUp(Event ev, int x, int y){
         if(actual != null){ 
             for(int i = 0; i < ROWS; i++)
                 for(int j = 0; j < COLUMNS; j++){
-                    if(actual.getPosicion() == (i*ROWS + j)){
-                       actual.x = sitios[i][j].x;
-                       actual.y = sitios[i][j].y;
+                    if((actual.intersects(sitios[i][j])) && (actual.getPosicion() == ((i*ROWS) + j))){
+                       actual.x = j*Pieza.SIZE;
+                       actual.y = i*Pieza.SIZE;
                        actual.setOk();
-                    } else{
-                        actual.setX(actualIniX);
-                        actual.setY(actualIniY);
-                    }
+                    } 
                 }
             repaint();
             actual = null;

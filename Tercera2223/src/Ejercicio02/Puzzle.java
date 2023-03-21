@@ -97,7 +97,7 @@ public class Puzzle extends Applet{
         }
         return true;
     }
-    public boolean mouseUp(Event ev, int x, int y){//cuando haces click y sin soltar, mueves
+    public boolean mouseUp(Event ev, int x, int y){
         if(actual != null){    
             if(actual.intersects(sitios[posActual])){
                actual.x = sitios[posActual].x;
