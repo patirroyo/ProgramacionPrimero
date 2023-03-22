@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sound.sampled.Clip;
 
 /**
  *
@@ -32,11 +31,7 @@ public class Robin extends Applet implements Runnable {
     private int contador = 0;
     private int score = 0;
     private static final int MAXFLECHAS = 3;
-    
-    
-    
-    
-    
+
     public void init(){
         this.setSize(SIZEX, SIZEY);
        
@@ -75,8 +70,7 @@ public class Robin extends Applet implements Runnable {
     }
 
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
-        paint(g);
-        
+        paint(g);  
     }
     
     public void run(){
@@ -93,15 +87,12 @@ public class Robin extends Applet implements Runnable {
     }
 
     public boolean mouseMove(Event ev, int x, int y){
-        arquero.update(x, y);
-        
-        
+        arquero.update(x, y);  
         return true;
     }
     public boolean mouseDown(Event ev, int x, int y){
         if(flechas.size() < MAXFLECHAS)
-            flechas.add(new Flecha(y, flecha));
-        
+            flechas.add(new Flecha(y, flecha));   
         return true;
     }
     private void LoDeLosGlobos() {
@@ -118,16 +109,14 @@ public class Robin extends Applet implements Runnable {
                 if(!flechas.isEmpty())
                     for(Flecha flecha : flechas){
                         if(globo.intersects(flecha)){
-                           if(!globo.isExplotado()){
+                            if(!globo.isExplotado()){
                                score++;
                                flechas.remove(flecha);
-                           }
-                           globo.setExplotado();
-                           
-                           break;
+                             }
+                            globo.setExplotado();
+                            break;
                         }                            
                     }
-
             }
         if(globos.get(0).y < - globos.get(0).height){
             globos.remove(globos.get(0));
