@@ -31,6 +31,7 @@ public class Robin extends Applet implements Runnable {
     private List<Globo> globos = new ArrayList<Globo>();
     private int contador = 0;
     private int score = 0;
+    private static final int MAXFLECHAS = 3;
     
     
     
@@ -98,32 +99,39 @@ public class Robin extends Applet implements Runnable {
         return true;
     }
     public boolean mouseDown(Event ev, int x, int y){
-       flechas.add(new Flecha(y, flecha));
+        if(flechas.size() < MAXFLECHAS)
+            flechas.add(new Flecha(y, flecha));
         
         return true;
     }
     private void LoDeLosGlobos() {
-        contador++;
-        if(contador%50 == 0)
+        //con cada iteración del bucle añadimos al contador el delay para que nos marque los ms "exactos" que han pasado
+        contador+= delay;
+        if(contador>1000){
+            //cada 1000 ms 
             globos.add(new Globo(globosImgs[(int)(Math.random()*NUMGLOBOS)], explota));
+            contador = 0;
+        }
         if(!globos.isEmpty())
-                for(Globo globo : globos){
-                    globo.update();
-                    if(globo.y < - globo.height){
-                        globos.remove(globo);
-                        break;
+            for(Globo globo : globos){
+                globo.update();
+                if(!flechas.isEmpty())
+                    for(Flecha flecha : flechas){
+                        if(globo.intersects(flecha)){
+                           if(!globo.isExplotado()){
+                               score++;
+                               flechas.remove(flecha);
+                           }
+                           globo.setExplotado();
+                           
+                           break;
+                        }                            
                     }
-                    if(!flechas.isEmpty())
-                        for(Flecha flecha : flechas){
-                            if(globo.intersects(flecha)){
-                               if(!globo.isExplotado())
-                                   score++;
-                               globo.setExplotado();
-                               break;
-                            }                            
-                        }
-                                
-                }
+
+            }
+        if(globos.get(0).y < - globos.get(0).height){
+            globos.remove(globos.get(0));
+        }
     }
     private void LoDeLasFlechas() {
         if(!flechas.isEmpty())
@@ -138,6 +146,7 @@ public class Robin extends Applet implements Runnable {
     private void pintarScore() {
         noseve.setColor(Color.BLACK);
         noseve.drawString("SCORE: " + score, 300, SIZEY - 5);
+        noseve.drawString("FLECHAS: " + (3 - flechas.size()), 400, SIZEY - 5);
     }
 
     private void pintarGlobos() {
