@@ -23,12 +23,14 @@ public class Robin extends Applet implements Runnable {
     private Graphics noseve;
     public final static int SIZEX = 800;
     public final static int SIZEY = 600;
-    Image robin, flecha, globo, explota;
-    Arquero arquero;
-    List<Flecha> flechas = new ArrayList<Flecha>();
-    List<Globo> globos = new ArrayList<Globo>();
+    private Image robin, flecha, explota;
+    private final int NUMGLOBOS = 3;
+    private Image globosImgs[];
+    private Arquero arquero;
+    private List<Flecha> flechas = new ArrayList<Flecha>();
+    private List<Globo> globos = new ArrayList<Globo>();
     private int contador = 0;
-    Clip boom;
+    private int score = 0;
     
     
     
@@ -42,13 +44,15 @@ public class Robin extends Applet implements Runnable {
         
         robin = getImage(getCodeBase(), "Ejercicio03/Imagenes/robin.png");
         flecha = getImage(getCodeBase(), "Ejercicio03/Imagenes/flecha.png");
-        globo = getImage(getCodeBase(), "Ejercicio03/Imagenes/globo.jpg");
-        explota = getImage(getCodeBase(), "Ejercicio03/Imagenes/bang.jpg");
+        explota = getImage(getCodeBase(), "Ejercicio03/Imagenes/bang.png");
+
+        globosImgs = new Image[3];
+        for(int i = 0; i < NUMGLOBOS; i++)
+            globosImgs[i] = getImage(getCodeBase(), "Ejercicio03/Imagenes/globo" + (i+1) + ".png");
         
-        //boom = AudioSystem.get
         
         arquero = new Arquero(robin);
-        globos.add(new Globo(globo, explota));
+        globos.add(new Globo(globosImgs[0], explota));
     }
     public void start(){
         animacion = new Thread(this);
@@ -56,21 +60,19 @@ public class Robin extends Applet implements Runnable {
     }
     
     public void paint(Graphics g){
-       noseve.setColor(Color.WHITE);
-       noseve.fillRect(0, 0, SIZEX, SIZEY);
+       noseve.setColor(Color.CYAN);
+       noseve.fillRect(0, 0, SIZEX, 100);
+       noseve.setColor(Color.LIGHT_GRAY);
+       noseve.fillRect(0, 100, SIZEX, SIZEY - 100);
+       
        arquero.paint(noseve, this);
-       
-       if(!flechas.isEmpty())
-           for(Flecha flecha : flechas)
-               flecha.paint(noseve, this);
-       
-       if(!globos.isEmpty())
-           for(Globo globo : globos)
-               globo.paint(noseve, this);
+       pintarFlechas();
+       pintarGlobos();
+       pintarScore();
       
        g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
-    
+
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
         paint(g);
         
@@ -78,35 +80,9 @@ public class Robin extends Applet implements Runnable {
     
     public void run(){
         while(true){
-            contador++;
-            if(contador%200 == 0)
-                globos.add(new Globo(globo, explota));
-            
-            if(!flechas.isEmpty())
-                for(Flecha flecha : flechas){
-                    flecha.update();
-                    if(flecha.x > SIZEX){
-                        flechas.remove(flecha);
-                        break;
-                    }
-                }
-            if(!globos.isEmpty())
-                for(Globo globo : globos){
-                    globo.update();
-                    if(globo.y < - globo.height){
-                        globos.remove(globo);
-                        break;
-                    }
-                    if(!flechas.isEmpty())
-                        for(Flecha flecha : flechas){
-                            if(globo.intersects(flecha))
-                               globo.setExplotado();
-                        }
-                                
-                }
-                    
+            LoDeLosGlobos();
+            LoDeLasFlechas();
             repaint();
-           
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException ex){
@@ -114,7 +90,7 @@ public class Robin extends Applet implements Runnable {
             }
         }
     }
-    
+
     public boolean mouseMove(Event ev, int x, int y){
         arquero.update(x, y);
         
@@ -125,5 +101,54 @@ public class Robin extends Applet implements Runnable {
        flechas.add(new Flecha(y, flecha));
         
         return true;
+    }
+    private void LoDeLosGlobos() {
+        contador++;
+        if(contador%50 == 0)
+            globos.add(new Globo(globosImgs[(int)(Math.random()*NUMGLOBOS)], explota));
+        if(!globos.isEmpty())
+                for(Globo globo : globos){
+                    globo.update();
+                    if(globo.y < - globo.height){
+                        globos.remove(globo);
+                        break;
+                    }
+                    if(!flechas.isEmpty())
+                        for(Flecha flecha : flechas){
+                            if(globo.intersects(flecha)){
+                               if(!globo.isExplotado())
+                                   score++;
+                               globo.setExplotado();
+                               break;
+                            }                            
+                        }
+                                
+                }
+    }
+    private void LoDeLasFlechas() {
+        if(!flechas.isEmpty())
+            for(Flecha flecha : flechas){
+                flecha.update();
+                if(flecha.x > SIZEX){
+                    flechas.remove(flecha);
+                    break;
+                }
+            }
+    }
+    private void pintarScore() {
+        noseve.setColor(Color.BLACK);
+        noseve.drawString("SCORE: " + score, 300, SIZEY - 5);
+    }
+
+    private void pintarGlobos() {
+        if(!globos.isEmpty())
+            for(Globo globo : globos)
+                globo.paint(noseve, this);
+    }
+
+    private void pintarFlechas() {
+        if(!flechas.isEmpty())
+            for(Flecha flecha : flechas)
+                flecha.paint(noseve, this);
     }
 }

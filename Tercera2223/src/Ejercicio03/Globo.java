@@ -19,9 +19,10 @@ public class Globo extends Rectangle{
     Image explosion; 
     private int velY;
     private boolean explotado = false;
+    private static final int SIZE = 100;
     
     public Globo(Image img, Image explota){
-        super(Robin.SIZEX - 150, Robin.SIZEY, 100, 100);
+        super(Robin.SIZEX - ((int)(Math.random()*300)+100), Robin.SIZEY, SIZE, SIZE);
         imagen = img;
         explosion = explota;
         velY = - ((int)(Math.random()*3) + 2);
@@ -39,5 +40,10 @@ public class Globo extends Rectangle{
     public void setExplotado() {
         explotado = true;
     }
+
+    public boolean isExplotado() {
+        return explotado;
+    }
+    
     
 }
