@@ -108,7 +108,7 @@ public class Robin extends Applet implements Runnable {
                 globo.update();
                 if(!flechas.isEmpty())
                     for(Flecha flecha : flechas){
-                        if(globo.intersects(flecha)){
+                        if(globo.contains(flecha)){
                             if(!globo.isExplotado()){
                                score++;
                                flechas.remove(flecha);

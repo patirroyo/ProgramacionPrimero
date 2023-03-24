@@ -8,22 +8,23 @@ package Ejercicio03;
 import java.applet.Applet;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.Point;
+
 
 /**
  *
  * @author alberto
  */
-public class Flecha extends Rectangle{
+public class Flecha extends Point{
     Image imagen;
     int velX = 4;
     
     public Flecha(int y, Image img){
-        super(100, y-30, 50, 25);
+        super(100, y-30);
         imagen = img;
     }
     public void paint(Graphics g, Applet applet){
-        g.drawImage(imagen, x, y, width, height, applet);
+        g.drawImage(imagen, x-50, y, 50, 25, applet);
     }
     public void update(){
         x += velX;
