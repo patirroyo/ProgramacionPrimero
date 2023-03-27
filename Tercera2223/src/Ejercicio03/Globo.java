@@ -35,6 +35,7 @@ public class Globo extends Rectangle{
     }
     public void update(){
         y += velY;
+        
     }
 
     public void setExplotado() {

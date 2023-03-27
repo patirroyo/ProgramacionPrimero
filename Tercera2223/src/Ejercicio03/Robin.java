@@ -103,34 +103,36 @@ public class Robin extends Applet implements Runnable {
             globos.add(new Globo(globosImgs[(int)(Math.random()*NUMGLOBOS)], explota));
             contador = 0;
         }
-        if(!globos.isEmpty())
-            for(Globo globo : globos){
-                globo.update();
-                if(!flechas.isEmpty())
-                    for(Flecha flecha : flechas){
-                        if(globo.contains(flecha)){
-                            if(!globo.isExplotado()){
-                               score++;
-                               flechas.remove(flecha);
-                             }
-                            globo.setExplotado();
-                            break;
-                        }                            
-                    }
-            }
+        if(globos.isEmpty())
+            return;
+        for(Globo globo : globos){
+            globo.update();
+            if(!flechas.isEmpty())
+                for(Flecha flecha : flechas){
+                    if(globo.contains(flecha)){
+                        if(!globo.isExplotado()){
+                           score++;
+                           flechas.remove(flecha);
+                         }
+                        globo.setExplotado();
+                        break;
+                    }                            
+                }
+        }
         if(globos.get(0).y < - globos.get(0).height){
             globos.remove(globos.get(0));
         }
     }
     private void LoDeLasFlechas() {
-        if(!flechas.isEmpty())
-            for(Flecha flecha : flechas){
-                flecha.update();
-                if(flecha.x > SIZEX){
-                    flechas.remove(flecha);
-                    break;
-                }
+        if(flechas.isEmpty())
+            return;
+        for(Flecha flecha : flechas){
+            flecha.update();
+            if(flecha.x > SIZEX){
+                flechas.remove(flecha);
+                break;
             }
+        }
     }
     private void pintarScore() {
         noseve.setColor(Color.BLACK);
