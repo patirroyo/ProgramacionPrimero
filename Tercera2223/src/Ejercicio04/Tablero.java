@@ -22,6 +22,8 @@ public class Tablero extends Applet implements Runnable {
     private Graphics noseve;
     public final static int SIZEX = 500;
     public final static int SIZEY = 500;
+    private static final int CENTRADOX = 125;
+    private static final int CENTRADOY = 100;
     private int seconds = 0;
     private int minutes = 0;
     private int NUMBOTONES = 25;
@@ -48,7 +50,7 @@ public class Tablero extends Applet implements Runnable {
         for(int i = 0; i < ROWS; i++){
             for(int j = 0; j < COLUMNS; j++)
                 if(i*ROWS + j < NUMBOTONES)//el último lugar no tiene imagen = null.
-                    lugares[i][j] = new Lugar(j*Lugar.SIZE + 125, i*Lugar.SIZE + 100, imagenes[i*ROWS + j], (i*ROWS + j) +1);   
+                    lugares[i][j] = new Lugar(j*Lugar.SIZE + CENTRADOX, i*Lugar.SIZE + CENTRADOY, imagenes[i*ROWS + j], (i*ROWS + j) +1);   
         }
         try {
             error = getAudioClip(new URL(getCodeBase(), "Ejercicio04/sonidos/error.wav"));
@@ -57,17 +59,19 @@ public class Tablero extends Applet implements Runnable {
         } catch (MalformedURLException ex) {
             Logger.getLogger(Tablero.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        hueco = new Point(Lugar.SIZE, Lugar.SIZE);
+        //indicamos en qué posicion está el hueco (4,4)
+        hueco = new Point(ROWS-1, COLUMNS-1);
         
         boton = new Button("Empezar a jugar");
-        this.add(boton);
+        this.add(boton, "South");
        
         imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
         
         
     }
+
+    
     public void start(){
         animacion = new Thread(this);
         
@@ -115,16 +119,20 @@ public class Tablero extends Applet implements Runnable {
         Point click;
         //Restamos el "centrado" y luego dividimos entre Lugar.Size de esta forma
         //obtenemos la poisición 
-        click = new Point((y-100)/Lugar.SIZE, (x-125)/Lugar.SIZE);
+        click = new Point((x-CENTRADOX)/Lugar.SIZE, (y-CENTRADOY)/Lugar.SIZE);
+        if(!mover(click))
+            error.play();
+        else
+            acierto.play();
             
-      
         
-        //actual.update();
+        
         
         return true;
     }
     
     public boolean mover(Point click){
+        //nos indica si la pieza se puede mover o no
         Point desplazamiento, hasta;
         /*desplazamiento es el movimento, posiciones en horizontal y/o en vertical
         que se tiene que mover.
@@ -132,7 +140,16 @@ public class Tablero extends Applet implements Runnable {
         usar recursividad para hacerle hueco.
         */
         desplazamiento = new Point(delta(click.x, hueco.x), delta(click.y, hueco.y));
-        return false;
+        //si un número es 0 y el otro no return true, si no false.
+        if((desplazamiento.x == 0) && (desplazamiento.y == 0))  
+            return false;
+        if((desplazamiento.x != 0) && (desplazamiento.y != 0))  
+            return false;
+        
+        //hasta donde se tiene que mover (click, + desplazamiento)
+        hasta = new Point(click.x + desplazamiento.x, click.y + desplazamiento.y);
+        
+        return true;
     }
     public int delta(int a, int b){ 
     //esta función devuelve 0, -1 o 1
