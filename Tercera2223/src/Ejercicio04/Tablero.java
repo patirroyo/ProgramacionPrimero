@@ -3,6 +3,7 @@ package Ejercicio04;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
@@ -35,10 +36,13 @@ public class Tablero extends Applet implements Runnable {
     private Lugar actual;
     private AudioClip error, acierto, exito;
     private Point hueco;
+    private boolean win = false;
     
     
     public void init(){
         this.setSize(SIZEX, SIZEY);
+        this.setLayout(new BorderLayout());
+        this.add("South", new Button("Empezar a jugar"));
         
         imagenes = new Image[NUMBOTONES];
         
@@ -61,10 +65,6 @@ public class Tablero extends Applet implements Runnable {
         }
         //indicamos en qué posicion está el hueco (4,4)
         hueco = new Point(ROWS-1, COLUMNS-1);
-        
-        boton = new Button("Empezar a jugar");
-        this.add(boton, "South");
-       
         imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
         
@@ -74,6 +74,7 @@ public class Tablero extends Applet implements Runnable {
     
     public void start(){
         animacion = new Thread(this);
+
         
     }
     
@@ -88,6 +89,8 @@ public class Tablero extends Applet implements Runnable {
        }
        
        paintTime();
+       if(win & animacion.isAlive())
+           paintWin();
       
        g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
@@ -98,7 +101,8 @@ public class Tablero extends Applet implements Runnable {
     
     public void run(){
         while(true){
-            seconds++;
+            if(!win)
+                seconds++;
             if(seconds >= 60){
                 minutes++;
                 seconds = 0;
@@ -113,22 +117,36 @@ public class Tablero extends Applet implements Runnable {
     }
     
     public boolean mouseDown(Event ev, int x, int y){
-        if(ev.target instanceof Button){
-            animacion.start();
-        }
+       
         Point click;
         //Restamos el "centrado" y luego dividimos entre Lugar.Size de esta forma
         //obtenemos la poisición 
-        click = new Point((x-CENTRADOX)/Lugar.SIZE, (y-CENTRADOY)/Lugar.SIZE);
+        click = new Point((y-CENTRADOY)/Lugar.SIZE, (x-CENTRADOX)/Lugar.SIZE);
         if(!mover(click))
             error.play();
-        else
+        else{
             acierto.play();
-            
-        
-        
-        
+            win = true;
+            for(int i = 0; i <ROWS; i++)
+                for(int j = 0; j<COLUMNS; j++)
+                    if(lugares[i][j].getValor() != (i*ROWS + j) +1)
+                        win = false;
+            if(win)
+                exito.play();
+        }
         return true;
+    }
+    
+    public boolean action(Event ev, Object obj){
+         if(ev.target instanceof Button){
+            if(!animacion.isAlive())
+                    animacion.start();
+            seconds = minutes = 0;
+            for(int i = 0; i < 200; i++)
+                mover(new Point((int)((Math.random()* COLUMNS)), (int)((Math.random()* ROWS))));
+            return true;
+         }
+         return false;
     }
     
     public boolean mover(Point click){
@@ -148,7 +166,29 @@ public class Tablero extends Applet implements Runnable {
         
         //hasta donde se tiene que mover (click, + desplazamiento)
         hasta = new Point(click.x + desplazamiento.x, click.y + desplazamiento.y);
+        //pregunta en negativo un poco fea pero funcional, si no puedo mover...
+        if(!(hasta.x == hueco.x && hasta.y == hueco.y))
+            mover(hasta);
+        lugares[hueco.x][hueco.y].setImagen(lugares[click.x][click.y].getImagen());
+        lugares[hueco.x][hueco.y].setValor(lugares[click.x][click.y].getValor());
+        lugares[click.x][click.y].setValor((hueco.y * ROWS) + hueco.x +1);
+        lugares[click.x][click.y].setImagen(null);
+        lugares[click.x][click.y].setValor((click.x+1) * (click.y+1));
+        hueco.x -= desplazamiento.x;
+        hueco.y -= desplazamiento.y;
+        /*
+        hueco.x -= click.x;
+        hueco.y -= click.y;
         
+        O 
+  
+        hueco = click;
+        */
+        repaint();
+        
+        
+            
+            
         return true;
     }
     public int delta(int a, int b){ 
@@ -161,10 +201,12 @@ public class Tablero extends Applet implements Runnable {
     private void paintTime() {
         noseve.setColor(Color.BLACK);
         if(seconds < 10)
-            noseve.drawString("Time:    " + minutes + " : 0"+ seconds, 400, SIZEY - 5);
+            noseve.drawString("Time:    " + minutes + " : 0"+ seconds, 400, 15);
         else
-            noseve.drawString("Time:    " + minutes + " : "+ seconds, 400, SIZEY - 5);
-        
-        
+            noseve.drawString("Time:    " + minutes + " : "+ seconds, 400, 15);
+    }
+    private void paintWin() {
+        noseve.setColor(Color.BLACK);
+        noseve.drawString("HAS GANADO!", 200, 400);
     }
 }
