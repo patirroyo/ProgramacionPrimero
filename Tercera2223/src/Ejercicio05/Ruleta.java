@@ -22,13 +22,17 @@ public class Ruleta extends Applet implements Runnable {
     private Graphics noseve;
     private Image imagen; 
     public final static int SIZEX = 1000;
-    public final static int SIZEY = 800;
+    public final static int SIZEY = 1000;
     private int NUMCASILLAS = 36;
     public static final int ROWS = 12;
     public static final int COLUMNS = 3;
     private boolean win = false;
     private Casilla[][] casillas;
     private List lRojos;
+    private Image[] fichaImagenes;
+    private final int[] VALORFICHA = {1, 5, 10, 25, 50, 100, 500, 1000, 5000, 10000};
+    private Ficha[][] fichas;
+    private static final int NFICHAS = 10;
     
     
     public void init(){
@@ -47,12 +51,23 @@ public class Ruleta extends Applet implements Runnable {
                     lRojos.add(new Integer(valorCasilla));
                 }
         }
+        fichaImagenes = new Image[NFICHAS];
+        
+        for(int i = 0; i < fichaImagenes.length; i++)
+            fichaImagenes[i] = getImage(getCodeBase(), "Ejercicio05/Fichas/" + "ficha" + (i+1) + ".png"); 
+        
+        fichas = new Ficha[NFICHAS][NFICHAS];
+        for(int i = 0; i < NFICHAS; i++)
+            for(int j = 0; j < NFICHAS; j++)
+                fichas[i][j] = new Ficha(i*(Ficha.LADO-10),VALORFICHA[i], fichaImagenes[i]);
+        
         
         imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
         
         
     }
+   
 
     private static boolean numeroEsNegro(final int valorCasilla) {
         return (valorCasilla % 2 == 0 && (valorCasilla <= 10 || ((valorCasilla > 19) && valorCasilla < 29)))||
@@ -61,9 +76,7 @@ public class Ruleta extends Applet implements Runnable {
 
     
     public void start(){
-        
-
-        
+  
     }
     
     public void paint(Graphics g){
@@ -75,6 +88,9 @@ public class Ruleta extends Applet implements Runnable {
             for(int j = 0; j < COLUMNS; j++)
                 casillas[i][j].paint(noseve);
        }
+       for(int i = 0; i < NFICHAS; i++)
+            for(int j = 0; j < NFICHAS; j++)
+                fichas[i][j].paint(noseve, this);
        
        
       
@@ -97,14 +113,5 @@ public class Ruleta extends Applet implements Runnable {
        
         
         return true;
-    }
-    
-    public boolean action(Event ev, Object obj){
-         if(ev.target instanceof Button){
-           
-            return true;
-         }
-         return false;
-    }
-    
+    } 
 }
