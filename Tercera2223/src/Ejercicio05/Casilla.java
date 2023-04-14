@@ -9,7 +9,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class Casilla extends Rectangle{
-    public static final int LADO = 60;
+    public static final int LADO = 75;
     private int valor; 
     private Color color;
     
@@ -27,4 +27,9 @@ public class Casilla extends Rectangle{
         gg.drawString(Integer.toString(valor), (x + LADO/3), (y + LADO/2));
         /*también se puede transformar a String con "" + valor*/
     }
+
+    public int getValor() {
+        return valor;
+    }
+    
 }

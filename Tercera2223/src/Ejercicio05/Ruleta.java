@@ -2,6 +2,8 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+
+Crear un boton, al hacer click, saca un numero aleatorio entre 0-36 y escribe rojo-negro, par-impar, falta-pasa
  */
 package Ejercicio05;
 
@@ -33,6 +35,7 @@ public class Ruleta extends Applet implements Runnable {
     private final int[] VALORFICHA = {1, 5, 10, 25, 50, 100, 500, 1000, 5000, 10000};
     private Ficha[][] fichas;
     private static final int NFICHAS = 10;
+    private Ficha fichaActual;
     
     
     public void init(){
@@ -59,7 +62,7 @@ public class Ruleta extends Applet implements Runnable {
         fichas = new Ficha[NFICHAS][NFICHAS];
         for(int i = 0; i < NFICHAS; i++)
             for(int j = 0; j < NFICHAS; j++)
-                fichas[i][j] = new Ficha(i*(Ficha.LADO-10),VALORFICHA[i], fichaImagenes[i]);
+                fichas[i][j] = new Ficha(i*(Ficha.LADO-10)+j+i*15,VALORFICHA[i], fichaImagenes[i]);
         
         
         imagen = this.createImage(SIZEX, SIZEY);
@@ -102,16 +105,34 @@ public class Ruleta extends Applet implements Runnable {
     }
     
     public void run(){
-        while(true){
-            
-            
-            
+        while(true){  
         }
     }
     
     public boolean mouseDown(Event ev, int x, int y){
-       
-        
+       for(int i = 0; i < NFICHAS; i++)
+            for(int j = 0; j < NFICHAS; j++)
+                if(fichas[i][j].contains(x, y)){
+                    fichaActual = fichas[i][j];
+                }
+        fichaActual.clearApuestas();
         return true;
     } 
+    public boolean mouseDrag(Event ev, int x, int y){
+        if(fichaActual == null)
+            return false;
+        
+        fichaActual.move(x, y);
+        repaint();
+        return true;
+    }
+    public boolean mouseUp(Event ev, int x, int y){
+        if(fichaActual == null)
+            return false;
+                 
+        fichaActual.setApuestas(casillas);         
+        fichaActual = null;
+            
+        return true;
+    }
 }
