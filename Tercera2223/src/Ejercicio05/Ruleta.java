@@ -16,6 +16,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Panel;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -40,6 +41,8 @@ public class Ruleta extends Applet implements Runnable {
     private int numeroAleatorio;
     private static final int NJUGADAS = 10;
     private int[] ultimas10jugadas;
+    private int saldo;
+    private int acumulador;
     
     @Override
     public void init(){
@@ -55,6 +58,9 @@ public class Ruleta extends Applet implements Runnable {
         instanciarFichas(); 
         
         ultimas10jugadas = new int[NJUGADAS];
+        
+        saldo = 100000;
+        
         
         imagen = this.createImage(SIZEX, SIZEY);
         noseve = imagen.getGraphics(); 
@@ -83,6 +89,10 @@ public class Ruleta extends Applet implements Runnable {
         paintNumeroAleatorio();
         paintUltimas10jugadas();
         
+        noseve.setColor(Color.BLACK);
+        noseve.drawString(Integer.toString(saldo) + " $", 500, 400);
+        noseve.drawString(Integer.toString(acumulador) + " $", 500, 450);
+        
         g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
      public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -96,8 +106,25 @@ public class Ruleta extends Applet implements Runnable {
     
     public boolean action(Event ev, Object obj){
        if(ev.target instanceof Button){
-           numeroAleatorio = (int)(Math.random() * 37);
-           guardarUltimas10jugadas();
+            numeroAleatorio = (int)(Math.random() * 37);
+            guardarUltimas10jugadas();
+            acumulador = 0;
+            for(int i = 0; i < NFICHAS; i++)
+                for(int j = 0; j < NFICHAS; j++){
+                    for(Integer elemento : fichas[i][j].getApuestas())
+                        if(numeroAleatorio == elemento){
+                            acumulador += fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size();
+                            System.out.println("valor ficha: " + fichas[i][j].getValor());
+                            System.out.println("tamaño lista apuesta : " + fichas[i][j].getApuestas().size());
+                            System.out.println("acumulado: " + fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size());
+                        }
+                    if(!fichas[i][j].getApuestas().isEmpty())
+                            acumulador -= fichas[i][j].getValor();
+                }
+            saldo += acumulador;
+                         
+           
+               
            repaint();
            return true;
        }
@@ -115,9 +142,8 @@ public class Ruleta extends Applet implements Runnable {
     public boolean mouseDown(Event ev, int x, int y){
        for(int i = 0; i < NFICHAS; i++)
             for(int j = 0; j < NFICHAS; j++)
-                if(fichas[i][j].contains(x, y)){
+                if(fichas[i][j].contains(x, y))
                     fichaActual = fichas[i][j];
-                }
         fichaActual.clearApuestas();
         return true;
     } 

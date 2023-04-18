@@ -48,4 +48,13 @@ public class Ficha extends Rectangle{
         apuestas.clear();
         System.out.println("Ficha : "+ valor + " Borradas apuestas");
     }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public ArrayList<Integer> getApuestas() {
+        return apuestas;
+    }
+    
 }
