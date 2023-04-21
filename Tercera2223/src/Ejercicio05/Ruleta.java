@@ -42,7 +42,7 @@ public class Ruleta extends Applet implements Runnable {
     private static final int NJUGADAS = 10;
     private int[] ultimas10jugadas;
     private int saldo;
-    private int acumulador;
+    private int acumuladorUltimaJugada;
     
     @Override
     public void init(){
@@ -91,7 +91,7 @@ public class Ruleta extends Applet implements Runnable {
         
         noseve.setColor(Color.BLACK);
         noseve.drawString(Integer.toString(saldo) + " $", 500, 400);
-        noseve.drawString(Integer.toString(acumulador) + " $", 500, 450);
+        noseve.drawString(Integer.toString(acumuladorUltimaJugada) + " $", 500, 450);
         
         g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
@@ -105,33 +105,43 @@ public class Ruleta extends Applet implements Runnable {
     }
     
     public boolean action(Event ev, Object obj){
-       if(ev.target instanceof Button){
+        if(ev.target instanceof Button){
             numeroAleatorio = (int)(Math.random() * 37);
             guardarUltimas10jugadas();
-            acumulador = 0;
-            for(int i = 0; i < NFICHAS; i++)
-                for(int j = 0; j < NFICHAS; j++){
-                    for(Integer elemento : fichas[i][j].getApuestas())
-                        if(numeroAleatorio == elemento){
-                            acumulador += fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size();
-                            System.out.println("valor ficha: " + fichas[i][j].getValor());
-                            System.out.println("tamaño lista apuesta : " + fichas[i][j].getApuestas().size());
-                            System.out.println("acumulado: " + fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size());
-                        }
-                    if(!fichas[i][j].getApuestas().isEmpty())
-                            acumulador -= fichas[i][j].getValor();
-                }
-            saldo += acumulador;
-                         
-           
-               
-           repaint();
-           return true;
-       }
+            comprobarApuesta();  
+        repaint();
+        return true;
+        }
            
         return false;
     }
 
+    private void comprobarApuesta() {
+        acumuladorUltimaJugada = 0;
+        for(int i = 0; i < NFICHAS; i++)
+            for(int j = 0; j < NFICHAS; j++){
+                comprobarApuestaANumero(i, j);
+                restarValorFichaApostada(i, j);
+            }
+        saldo += acumuladorUltimaJugada;
+    }
+
+    private void comprobarApuestaANumero(int i, int j) {
+        for(Integer elemento : fichas[i][j].getApuestas())
+            if(numeroAleatorio == elemento){
+                acumuladorUltimaJugada += fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size();
+                System.out.println("valor ficha: " + fichas[i][j].getValor());
+                System.out.println("tamaño lista apuesta : " + fichas[i][j].getApuestas().size());
+                System.out.println("acumulado: " + fichas[i][j].getValor() * NUMCASILLAS/fichas[i][j].getApuestas().size());
+            }
+    }
+    private void restarValorFichaApostada(int i, int j) {
+        if(!fichas[i][j].getApuestas().isEmpty()){
+            acumuladorUltimaJugada -= fichas[i][j].getValor();
+            System.out.println("Ficha jugada: -" + fichas[i][j].getValor());
+        }
+    }
+    
     private void guardarUltimas10jugadas() {
         for(int i = ultimas10jugadas.length - 1 ; i > 0 ; i--)
             ultimas10jugadas[i] = ultimas10jugadas[i -1];

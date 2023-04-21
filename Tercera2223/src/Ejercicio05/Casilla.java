@@ -20,11 +20,14 @@ public class Casilla extends Rectangle{
         this.color = color;
     }
     public void paint(Graphics gg){
+        gg.setColor(color);
+        gg.fillRect(x, y, width, height);
         gg.setColor(Color.WHITE);
         gg.drawRect(x, y, width, height);
-        gg.setColor(color);
         gg.setFont(new Font("TimesRoman", Font.PLAIN, 24));
-        gg.drawString(Integer.toString(valor), (x + LADO/3), (y + LADO/2));
+        gg.drawString(Integer.toString(valor), (x + 2*LADO/5), (y + 3*LADO/5));
+        
+        
         /*también se puede transformar a String con "" + valor*/
     }
 
