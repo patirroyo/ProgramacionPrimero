@@ -10,19 +10,33 @@ import java.awt.Image;
 public class Carta {
     private int valor;
     private Image imagen;
+    private Image reverso;
     private int x;
     private int y;
     public static final int WIDTH = 100;
     public static final int HEIGHT = 145;
     
-    public Carta(int valor, Image imagen){
-        x = 350;
+    public Carta(int valor, Image imagen, Image reverso){
+        x = 150;
         y = 50;
-        this.valor = valor;
+        this.valor = (valor > 10)?10:valor;
         this.imagen = imagen;
+        this.reverso = reverso;
     }
     public void paint(Graphics g, Applet applet){
         g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
+    }
+    public void paint(int x, Graphics g, Applet applet){
+        g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
+    }
+        public void paint(int x, int y, Graphics g, Applet applet){
+        g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
+    }
+    public void paint(int x, Graphics g, Applet applet, boolean tapada){
+        if(tapada)
+            g.drawImage(reverso, x, y, WIDTH, HEIGHT, applet);
+        else
+            g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
     }
 
     public int getValor() {

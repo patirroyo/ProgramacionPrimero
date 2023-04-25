@@ -26,12 +26,18 @@ public class BlackJack extends Applet implements Runnable {
     public static final int CARTASXPALO = 13;
     public static final int HUECOS = 7;
     private Image[] cartaImagen;
-    private Button boton;
+    private Image reverso;
+    private Button boton1;
+    private Button boton2;
+    private Button boton3;
     private int saldo;
     private int acumuladorUltimaJugada;
     private String [] palo = {"_of_clubs", "_of_diamonds", "_of_hearts", "_of_spades"};
-   // private Carta []carta;
+    private Carta carta;
     private Baraja baraja;
+    private ManoDeCartas jugador;
+    private ManoDeCartas croupier;
+    
     
     @Override
     public void init(){
@@ -42,22 +48,28 @@ public class BlackJack extends Applet implements Runnable {
         
         cartaImagen = new Image[NCARTAS];
         
+        jugador = new ManoDeCartas();
+        croupier = new ManoDeCartas();
         
         crearCartas(); 
-
-        
         
        // Panel panel = new Panel();
-        boton = new Button("Jugar !");
+       boton1 = new Button("Barajar");
+       boton2 = new Button("Sacar Carta");
+       boton3 = new Button("Croupier");
+               
        // panel.add(boton);
        // this.setLayout(new BorderLayout());
-        this.add("North", boton); 
+        this.add("North", boton1); 
+        this.add("North", boton2); 
+        this.add("North", boton3);
     }
     
     private void crearCartas() {
         for(int i = 0; i < NCARTAS; i++)
             cartaImagen[i] = getImage(getCodeBase(), "Ejercicio06/Cartas/" + ((i % CARTASXPALO) + 1) + palo[i/CARTASXPALO] + ".png");
-        baraja = new Baraja(cartaImagen);
+        reverso = getImage(getCodeBase(), "Ejercicio06/Cartas/reverso.png");
+        baraja = new Baraja(cartaImagen, reverso);
         /* Otra forma de hacerlo sin la baraja.
         carta = new Carta[NCARTAS];
         
@@ -82,21 +94,20 @@ public class BlackJack extends Applet implements Runnable {
         noseve.setColor(new Color(76,106,90));
         noseve.fillRect(0, 0, SIZEX, SIZEY);
       
-        
-        for(Carta carta : baraja.getLista())
-            carta.paint(noseve, this);
-        
-        
-        
-        noseve.setColor(Color.WHITE);
-        for(int i = 0; i < HUECOS; i++){
-            noseve.drawRect(i*Carta.WIDTH + 10*i + 20, 400, Carta.WIDTH, Carta.HEIGHT);
-            noseve.drawRect(i*Carta.WIDTH + 10*i + 20, 220, Carta.WIDTH, Carta.HEIGHT);
-        }
+        paintCartas();
         
         g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
-    
+
+    private void paintCartas() {
+        for(int i = 0; i < baraja.getLista().size(); i++)
+            baraja.getLista().get(i).paint(i*3, noseve, this, false);
+        if(!jugador.lista.isEmpty())
+            jugador.paint(400, noseve, this);
+        if(!croupier.lista.isEmpty())
+            croupier.paint(200, noseve, this);
+    }
+        
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
         paint(g);  
     }
@@ -108,10 +119,24 @@ public class BlackJack extends Applet implements Runnable {
     
     public boolean action(Event ev, Object obj){
         if(ev.target instanceof Button){
-            
+            if(obj.toString() == "Sacar Carta"){
+                carta = baraja.sacarCarta();
+                jugador.addCarta(carta);
+            }
+            if(obj.toString() == "Croupier"){
+                carta = baraja.sacarCarta();
+                croupier.addCarta(carta);
+            }
+            if(obj.toString() == "Barajar")
+                baraja.embarajar();
             repaint();
             return true;
         }  
         return false;
     }
+
+    public Image getReverso() {
+        return reverso;
+    }
+    
 }
