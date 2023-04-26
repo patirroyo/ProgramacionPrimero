@@ -6,11 +6,13 @@
 package Ejercicio06;
 
 import java.applet.Applet;
+import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Panel;
 
 /**
  *
@@ -53,16 +55,19 @@ public class BlackJack extends Applet implements Runnable {
         
         crearCartas(); 
         
-       // Panel panel = new Panel();
-       boton1 = new Button("Barajar");
-       boton2 = new Button("Sacar Carta");
-       boton3 = new Button("Croupier");
+        Panel panel = new Panel();
+        boton1 = new Button("Barajar");
+        boton2 = new Button("Sacar Carta");
+        boton3 = new Button("Croupier");
                
-       // panel.add(boton);
-       // this.setLayout(new BorderLayout());
-        this.add("North", boton1); 
-        this.add("North", boton2); 
-        this.add("North", boton3);
+        panel.add(boton1); 
+        panel.add(boton2); 
+        panel.add(boton3);
+        
+        this.setLayout(new BorderLayout());
+        this.add("South", panel);
+      
+        
     }
     
     private void crearCartas() {
@@ -101,11 +106,18 @@ public class BlackJack extends Applet implements Runnable {
 
     private void paintCartas() {
         for(int i = 0; i < baraja.getLista().size(); i++)
-            baraja.getLista().get(i).paint(i*3, noseve, this, false);
-        if(!jugador.lista.isEmpty())
+            baraja.getLista().get(i).paint(i*3 + 100, 10, noseve, this, false);
+        
+        if(!jugador.lista.isEmpty()){
             jugador.paint(400, noseve, this);
-        if(!croupier.lista.isEmpty())
+            noseve.setColor(Color.WHITE);
+            noseve.drawString("Jugador: " + jugador.puntuacion(), SIZEX-150, 450);
+        }
+        if(!croupier.lista.isEmpty()){
             croupier.paint(200, noseve, this);
+            noseve.setColor(Color.WHITE);
+            noseve.drawString("Croupier: " + croupier.puntuacion(), SIZEX-150, 250);
+        }
     }
         
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -137,6 +149,10 @@ public class BlackJack extends Applet implements Runnable {
 
     public Image getReverso() {
         return reverso;
+    }
+
+    public Graphics getNoseve() {
+        return noseve;
     }
     
 }

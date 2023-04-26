@@ -26,8 +26,22 @@ public class ManoDeCartas {
         lista.add(carta);
     }
     
+    public int puntuacion(){
+        int puntuacion = 0;
+        boolean as = false;
+        for(Carta carta:lista){
+            puntuacion += carta.getValor();
+            if(carta.isAS())
+                as = true;
+        }
+        if(as && puntuacion < 12)
+            puntuacion += 10;
+        
+        return puntuacion;
+    }
+    
     public void paint(int posY, Graphics gg, Applet applet){
         for(Carta carta:lista)
-            carta.paint(lista.indexOf(carta)*30, posY, gg, applet);
+            carta.paint(lista.indexOf(carta)*25, posY, gg, applet);
     }
 }

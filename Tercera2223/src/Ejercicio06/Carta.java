@@ -29,14 +29,20 @@ public class Carta {
     public void paint(int x, Graphics g, Applet applet){
         g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
     }
-        public void paint(int x, int y, Graphics g, Applet applet){
+    public void paint(int x, int y, Graphics g, Applet applet){
         g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
     }
-    public void paint(int x, Graphics g, Applet applet, boolean tapada){
+    public void paint(int x, int y, Graphics g, Applet applet, boolean tapada){
         if(tapada)
             g.drawImage(reverso, x, y, WIDTH, HEIGHT, applet);
         else
             g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
+    }
+    public boolean isAS(){
+        if(valor == 1)
+            return true;
+        else
+            return false;
     }
 
     public int getValor() {

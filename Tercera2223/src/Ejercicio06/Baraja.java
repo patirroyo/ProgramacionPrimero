@@ -22,8 +22,10 @@ public class Baraja {
         if(!lista.isEmpty()){
             carta = lista.get(0);
             lista.remove(0);
-        }else
-            System.out.println("No hay cartas");  
+        }else{
+            carta = null;
+            System.out.println("No hay cartas"); 
+        }
         return carta;
     }
     
