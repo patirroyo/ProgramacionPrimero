@@ -11,8 +11,11 @@ import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Graphics;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.Panel;
+import java.awt.TextField;
 
 /**
  *
@@ -39,7 +42,12 @@ public class BlackJack extends Applet implements Runnable {
     private Baraja baraja;
     private ManoDeCartas jugador;
     private ManoDeCartas croupier;
-    
+    public static final int YJUGADOR = 400;
+    public static final int YCROUPIER = 200;
+    private TextField apuesta;
+    private boolean finJugada = false;
+    private boolean ganaJugador = false;
+    private boolean empate = false;
     
     @Override
     public void init(){
@@ -55,19 +63,31 @@ public class BlackJack extends Applet implements Runnable {
         
         crearCartas(); 
         
+        setupPanels();
+      
+        
+    }
+
+    private void setupPanels() throws HeadlessException {
         Panel panel = new Panel();
-        boton1 = new Button("Barajar");
-        boton2 = new Button("Sacar Carta");
-        boton3 = new Button("Croupier");
-               
-        panel.add(boton1); 
+        boton1 = new Button("Carta !");
+        boton2 = new Button("Me planto !");
+        boton3 = new Button("Jugar !");
+        
+        panel.add(boton1);
         panel.add(boton2); 
-        panel.add(boton3);
+        
+        
+        Panel panel2 = new Panel();
+        Label etiqueta = new Label("Introduce tu apuesta: ", Label.RIGHT);
+        apuesta = new TextField("", 10);
+        panel2.add(etiqueta);
+        panel2.add(apuesta);
+        panel2.add(boton3);
         
         this.setLayout(new BorderLayout());
         this.add("South", panel);
-      
-        
+        this.add("North", panel2);
     }
     
     private void crearCartas() {
@@ -101,23 +121,34 @@ public class BlackJack extends Applet implements Runnable {
       
         paintCartas();
         
+        if(finJugada){
+            noseve.setColor(Color.WHITE);
+            if(ganaJugador)
+                noseve.drawString("Has ganado", 400, 300);
+            else if(empate)
+                noseve.drawString("Has empatado", 400, 300);
+            else
+                noseve.drawString("Has perdido", 400, 300);
+        }
+        
         g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
 
     private void paintCartas() {
         for(int i = 0; i < baraja.getLista().size(); i++)
-            baraja.getLista().get(i).paint(i*3 + 100, 10, noseve, this, false);
-        
+            baraja.getLista().get(i).paint(100, 50, noseve, this, true);
+        if(!croupier.lista.isEmpty()){
+            croupier.paint(YCROUPIER, noseve, this, finJugada);
+            noseve.setColor(Color.WHITE);
+            if(finJugada)
+                noseve.drawString("Croupier: " + croupier.puntuacion(), SIZEX-150, 250);
+        }
         if(!jugador.lista.isEmpty()){
-            jugador.paint(400, noseve, this);
+            jugador.paint(YJUGADOR, noseve, this, finJugada);
             noseve.setColor(Color.WHITE);
             noseve.drawString("Jugador: " + jugador.puntuacion(), SIZEX-150, 450);
         }
-        if(!croupier.lista.isEmpty()){
-            croupier.paint(200, noseve, this);
-            noseve.setColor(Color.WHITE);
-            noseve.drawString("Croupier: " + croupier.puntuacion(), SIZEX-150, 250);
-        }
+        
     }
         
     public void update(Graphics g){ //override, lo sobreescribimos eliminando la linea de borrar
@@ -130,21 +161,57 @@ public class BlackJack extends Applet implements Runnable {
     }
     
     public boolean action(Event ev, Object obj){
-        if(ev.target instanceof Button){
-            if(obj.toString() == "Sacar Carta"){
-                carta = baraja.sacarCarta();
-                jugador.addCarta(carta);
-            }
-            if(obj.toString() == "Croupier"){
-                carta = baraja.sacarCarta();
-                croupier.addCarta(carta);
-            }
-            if(obj.toString() == "Barajar")
-                baraja.embarajar();
+        if(ev.target instanceof TextField){
+            baraja.embarajar();
+            jugador.addCarta(baraja.sacarCarta());
+            jugador.addCarta(baraja.sacarCarta());
+            croupier.addCarta(baraja.sacarCarta());
+            croupier.addCarta(baraja.sacarCarta());
+            apuesta.setEditable(false);
             repaint();
             return true;
-        }  
+        }else if(ev.target instanceof Button){
+            if(obj.toString() == "Jugar !"){//pongo este boton porque en el mac no funciona la condición de arriba
+                finJugada = false;
+                empate = false;
+                ganaJugador = false;
+                jugador.lista.clear();
+                croupier.lista.clear();
+                baraja.embarajar();
+                jugador.addCarta(baraja.sacarCarta());
+                croupier.addCarta(baraja.sacarCarta());
+                jugador.addCarta(baraja.sacarCarta());
+                croupier.addCarta(baraja.sacarCarta());
+                apuesta.setEditable(false);
+            }
+            if("Carta !".equals(ev.arg) && !finJugada){
+                jugador.addCarta(baraja.sacarCarta());
+                if(jugador.pasado()){
+                    sacarCartaCroupier();
+                    finJugada = true;
+                }
+            }
+            if(obj.toString() == "Me planto !"){
+                if(!jugador.pasado() && !croupier.alcanza17()){
+                    sacarCartaCroupier();
+                } 
+                if((jugador.puntuacion() > croupier.puntuacion() && !jugador.pasado()) || 
+                    croupier.pasado() && !jugador.pasado())
+                    ganaJugador = true;
+                else if((jugador.pasado() && croupier.pasado()) || jugador.puntuacion() == croupier.puntuacion())
+                    empate = true;
+                finJugada = true;        
+                }
+                    
+            
+        }
+        repaint();
         return false;
+    }
+
+    private void sacarCartaCroupier() {
+        while(croupier.puntuacion() < jugador.puntuacion() && !croupier.alcanza17())
+            croupier.addCarta(baraja.sacarCarta());
     }
 
     public Image getReverso() {
@@ -153,6 +220,10 @@ public class BlackJack extends Applet implements Runnable {
 
     public Graphics getNoseve() {
         return noseve;
+    }
+
+    public ManoDeCartas getCroupier() {
+        return croupier;
     }
     
 }

@@ -18,13 +18,19 @@ public class Carta {
     
     public Carta(int valor, Image imagen, Image reverso){
         x = 150;
-        y = 50;
+        y = 100;
         this.valor = (valor > 10)?10:valor;
         this.imagen = imagen;
         this.reverso = reverso;
     }
     public void paint(Graphics g, Applet applet){
         g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
+    }
+    public void paint(Graphics g, Applet applet, boolean tapada){
+        if(tapada)
+            g.drawImage(reverso, x, y, WIDTH, HEIGHT, applet);
+        else
+            g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);
     }
     public void paint(int x, Graphics g, Applet applet){
         g.drawImage(imagen, x, y, WIDTH, HEIGHT, applet);

@@ -40,8 +40,22 @@ public class ManoDeCartas {
         return puntuacion;
     }
     
-    public void paint(int posY, Graphics gg, Applet applet){
-        for(Carta carta:lista)
-            carta.paint(lista.indexOf(carta)*25, posY, gg, applet);
+    public void paint(int posY, Graphics gg, Applet applet, Boolean finJugada){
+        for(Carta carta:lista){       
+            carta.setX(lista.indexOf(carta)*25);
+            carta.setY(posY);
+            carta.paint(gg, applet);
+            if(carta.equals(lista.get(0)) && carta.getY() == BlackJack.YCROUPIER && !finJugada)
+                carta.paint(gg, applet, true);
+            else    
+                carta.paint(gg, applet, false);
+        }
+    }
+    
+    public boolean pasado(){
+        return puntuacion() > 21;
+    }
+    public boolean alcanza17(){
+        return puntuacion() >= 17;
     }
 }
