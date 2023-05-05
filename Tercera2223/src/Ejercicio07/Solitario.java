@@ -26,7 +26,7 @@ public class Solitario extends Applet implements Runnable {
     MazoSecundario mSecundario;
     Carta activa;
     Image imagen;
-   // MazoPalo mPalos[];
+    MazoPalo mPalos[];
     //MazoJuego mJuegos[];
 
     public void init(){
@@ -48,10 +48,10 @@ public class Solitario extends Applet implements Runnable {
         baraja.barajar();
         
         mSecundario = new MazoSecundario();
-       /* mPalos = new MazoPalo[NUM_PALOS];
+        mPalos = new MazoPalo[NUM_PALOS];
         for(int i=0; i<NUM_PALOS; i++)
             mPalos[i] = new MazoPalo(400 + (i*100));
-        mJuegos = new MazoJuego[7];
+        /*mJuegos = new MazoJuego[7];
         for(int i=0; i<7; i++)
             mJuegos[i] = new MazoJuego(100 + (i*100));
 
@@ -84,6 +84,8 @@ public class Solitario extends Applet implements Runnable {
             for(Carta carta:mSecundario.lista)
                 carta.paint(noseve, this);
         //Pinto las cartas
+        for(int i = 0; i < mPalos.length; i++)
+            mPalos[i].paint(noseve, this);
         
 
        
@@ -104,7 +106,7 @@ public class Solitario extends Applet implements Runnable {
             repaint();
             return true;
         }
-        if(mSecundario.extraer().contains(x,y))
+        if(!mSecundario.lista.isEmpty() && mSecundario.extraer().contains(x,y))
             activa = mSecundario.extraer();
         return false;
     } 
@@ -118,6 +120,11 @@ public class Solitario extends Applet implements Runnable {
     public boolean mouseUp(Event ev, int x, int y){
         if(activa == null)
             return false;
+        for(int i = 0; i < mPalos.length; i++)
+            if(mPalos[i].intersects(activa)){
+                mPalos[i].cargar(activa);
+                mSecundario.lista.remove(activa);
+            }
         mSecundario.recolocar();
         activa = null;
         repaint();

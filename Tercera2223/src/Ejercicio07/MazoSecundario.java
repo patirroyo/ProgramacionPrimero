@@ -3,7 +3,6 @@ package Ejercicio07;
 
 import java.applet.Applet;
 import java.awt.Graphics;
-import java.awt.List;
 import java.util.ArrayList;
 
 
