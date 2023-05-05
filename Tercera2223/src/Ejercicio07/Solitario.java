@@ -111,11 +111,14 @@ public class Solitario extends Applet implements Runnable {
     public boolean mouseDrag(Event ev, int x, int y){
         if(activa == null)
             return false;
-        mSecundario.extraer().setPosicion(x-Carta.WIDTH/2, y-Carta.HEIGHT/2);
+        activa.setPosicion(x-Carta.WIDTH/2, y-Carta.HEIGHT/2);
         repaint();
         return true;
     } 
     public boolean mouseUp(Event ev, int x, int y){
+        if(activa == null)
+            return false;
+        mSecundario.recolocar();
         activa = null;
         repaint();
         return true;
