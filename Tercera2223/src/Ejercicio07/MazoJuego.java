@@ -8,12 +8,12 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 
-public class MazoPalo extends Rectangle{
+public class MazoJuego extends Rectangle{
     public ArrayList<Carta> lista;
-    public static final int POSY = 20;
+    public static final int POSY = 200;
     private int palo;
     
-    public MazoPalo(int x){
+    public MazoJuego(int x){
         super(x, POSY, Carta.WIDTH, Carta.HEIGHT);
         lista = new ArrayList<Carta>();
     }
@@ -28,7 +28,7 @@ public class MazoPalo extends Rectangle{
             }
         }else{
             if(palo == carta.getPalo())
-                if(lista.get(lista.size()-1).getValor() == carta.getValor()-1){
+                if(lista.get(lista.size()-1).getValor() == carta.getValor()+1){
                     lista.add(carta);
                     recolocar();
                     return true;
@@ -43,10 +43,7 @@ public class MazoPalo extends Rectangle{
         lista.remove(lista.size()-1);
     }
     public void recolocar(){
-        if(lista.isEmpty())
-            return;
-        for(int i = 0; i < lista.size(); i++)
-            lista.get(i).setPosicion(x, POSY + i*20);
+        lista.get(lista.size()-1).setPosicion(x, POSY);
     }
     
     public void paint(Graphics gg, Applet applet){

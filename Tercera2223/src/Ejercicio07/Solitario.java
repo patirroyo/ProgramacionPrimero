@@ -27,7 +27,8 @@ public class Solitario extends Applet implements Runnable {
     Carta activa;
     Image imagen;
     MazoPalo mPalos[];
-    //MazoJuego mJuegos[];
+    Boolean encontrado = false;
+    MazoJuego mJuegos[];
 
     public void init(){
         this.setSize(900, 700);
@@ -45,17 +46,17 @@ public class Solitario extends Applet implements Runnable {
         reverso = new Rectangle(20, 20, Carta.WIDTH, Carta.HEIGHT);
 
         baraja = new Baraja(imagenes);
-        baraja.barajar();
+       // baraja.barajar();
         
         mSecundario = new MazoSecundario();
         mPalos = new MazoPalo[NUM_PALOS];
         for(int i=0; i<NUM_PALOS; i++)
             mPalos[i] = new MazoPalo(400 + (i*100));
-        /*mJuegos = new MazoJuego[7];
+        mJuegos = new MazoJuego[7];
         for(int i=0; i<7; i++)
             mJuegos[i] = new MazoJuego(100 + (i*100));
 
-*/
+
         //Botones para pedir cartas o parar
         setup();
 
@@ -80,13 +81,13 @@ public class Solitario extends Applet implements Runnable {
         //Pinto la imagen del reverso
         noseve.drawImage(imgReverso, 20, 20, Carta.WIDTH, Carta.HEIGHT, this);
         
-        if(!mSecundario.lista.isEmpty())
-            for(Carta carta:mSecundario.lista)
-                carta.paint(noseve, this);
+        
         //Pinto las cartas
         for(int i = 0; i < mPalos.length; i++)
             mPalos[i].paint(noseve, this);
-        
+        if(!mSecundario.lista.isEmpty())
+            for(Carta carta:mSecundario.lista)
+                carta.paint(noseve, this);
 
        
         
@@ -122,12 +123,17 @@ public class Solitario extends Applet implements Runnable {
             return false;
         for(int i = 0; i < mPalos.length; i++)
             if(mPalos[i].intersects(activa)){
-                mPalos[i].cargar(activa);
-                mSecundario.lista.remove(activa);
+                if(mPalos[i].cargar(mSecundario.extraer())){
+                    mSecundario.eliminar();
+                    encontrado = true;
+                    break;
+                }
             }
-        mSecundario.recolocar();
+        if(!encontrado)
+            mSecundario.recolocar();
         activa = null;
         repaint();
+        encontrado = false;
         return true;
     } 
 }
