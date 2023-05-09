@@ -1,16 +1,10 @@
 package Ejercicio07;
 
 import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Panel;
-import java.awt.TextField;
-import java.awt.Button;
-import java.awt.Label;
 import java.awt.Rectangle;
 
 public class Solitario extends Applet implements Runnable {
@@ -29,6 +23,9 @@ public class Solitario extends Applet implements Runnable {
     MazoPalo mPalos[];
     Boolean encontrado = false;
     MazoJuego mJuegos[];
+    public static final int MAZOSJUEGO = 7;
+    Boolean activaIsMazoJuego = false;
+    int mazoJuego;
 
     public void init(){
         this.setSize(900, 700);
@@ -46,33 +43,17 @@ public class Solitario extends Applet implements Runnable {
         reverso = new Rectangle(20, 20, Carta.WIDTH, Carta.HEIGHT);
 
         baraja = new Baraja(imagenes);
-       // baraja.barajar();
+        baraja.barajar();
         
         mSecundario = new MazoSecundario();
         mPalos = new MazoPalo[NUM_PALOS];
         for(int i=0; i<NUM_PALOS; i++)
             mPalos[i] = new MazoPalo(400 + (i*100));
-        mJuegos = new MazoJuego[7];
-        for(int i=0; i<7; i++)
+        mJuegos = new MazoJuego[MAZOSJUEGO];
+        for(int i=0; i<MAZOSJUEGO; i++)
             mJuegos[i] = new MazoJuego(100 + (i*100));
-
-
-        //Botones para pedir cartas o parar
-        setup();
-
     }
 
-    private void setup() {
-        this.setLayout(new BorderLayout());
-        Panel panel = new Panel();
-        Button boton1 = new Button("Carta +");
-        Button boton2 = new Button("Me planto");
-        panel.add(boton1);
-        panel.add(boton2);
-        this.add("South",panel);
-
-       
-    }
 
     public void paint(Graphics g){
         noseve.setColor(new Color(76,106,90));
@@ -88,6 +69,9 @@ public class Solitario extends Applet implements Runnable {
         if(!mSecundario.lista.isEmpty())
             for(Carta carta:mSecundario.lista)
                 carta.paint(noseve, this);
+        for(int i=0; i<MAZOSJUEGO; i++)
+            if(!mJuegos[i].isEmpty())
+                mJuegos[i].paint(noseve, this);
 
        
         
@@ -109,11 +93,19 @@ public class Solitario extends Applet implements Runnable {
         }
         if(!mSecundario.lista.isEmpty() && mSecundario.extraer().contains(x,y))
             activa = mSecundario.extraer();
+        for(int i=0; i<MAZOSJUEGO; i++)
+            if(!mJuegos[i].lista.isEmpty() && mJuegos[i].extraer().contains(x,y)){
+                activa = mJuegos[i].extraer();
+                activaIsMazoJuego = true;
+                mazoJuego = i;
+                break;
+            }
         return false;
     } 
     public boolean mouseDrag(Event ev, int x, int y){
         if(activa == null)
             return false;
+        
         activa.setPosicion(x-Carta.WIDTH/2, y-Carta.HEIGHT/2);
         repaint();
         return true;
@@ -121,20 +113,54 @@ public class Solitario extends Applet implements Runnable {
     public boolean mouseUp(Event ev, int x, int y){
         if(activa == null)
             return false;
+        
         for(int i = 0; i < mPalos.length; i++)
             if(mPalos[i].intersects(activa)){
-                if(mPalos[i].cargar(mSecundario.extraer())){
-                    mSecundario.eliminar();
-                    encontrado = true;
+                if(mPalos[i].cargar(activa)){
+                    eliminarCartaDeSuMazo();
                     break;
                 }
             }
-        if(!encontrado)
+        
+        for(int i=0; i<MAZOSJUEGO; i++)
+            if(mJuegos[i].lista.isEmpty()){
+                if(mJuegos[i].intersects(activa))
+                    if(mJuegos[i].cargar(activa)){
+                        eliminarCartaDeSuMazo();
+                        break;
+                    }else{
+                        mJuegos[i].recolocar(activa);
+                        break;
+                    }
+               
+            }
+            else
+                if(mJuegos[i].lista.get(mJuegos[i].lista.size()-1).intersects(activa))
+                    if(mJuegos[i].cargar(activa)){
+                        eliminarCartaDeSuMazo();
+                        break;
+                    }else{
+                        mJuegos[i].recolocar(activa);
+                        break;
+                    }
+                
+                    
+                        
+        if(!encontrado && !mSecundario.lista.isEmpty())
             mSecundario.recolocar();
         activa = null;
+        activaIsMazoJuego = false;
         repaint();
         encontrado = false;
         return true;
     } 
+
+    private void eliminarCartaDeSuMazo() {
+        if(activaIsMazoJuego)
+            mJuegos[mazoJuego].eliminar(activa);
+        else
+            mSecundario.eliminar();
+        encontrado = true;
+    }
 }
 

@@ -43,11 +43,9 @@ public class MazoPalo extends Rectangle{
         lista.remove(lista.size()-1);
     }
     public void recolocar(){
-        if(lista.isEmpty())
-            return;
-        for(int i = 0; i < lista.size(); i++)
-            lista.get(i).setPosicion(x, POSY + i*20);
+        lista.get(lista.size()-1).setPosicion(x, POSY);
     }
+    
     
     public void paint(Graphics gg, Applet applet){
         gg.setColor(Color.WHITE);

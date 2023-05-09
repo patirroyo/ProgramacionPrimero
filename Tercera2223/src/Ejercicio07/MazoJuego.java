@@ -11,7 +11,6 @@ import java.util.ArrayList;
 public class MazoJuego extends Rectangle{
     public ArrayList<Carta> lista;
     public static final int POSY = 200;
-    private int palo;
     
     public MazoJuego(int x){
         super(x, POSY, Carta.WIDTH, Carta.HEIGHT);
@@ -20,30 +19,29 @@ public class MazoJuego extends Rectangle{
 
     public boolean cargar(Carta carta){
         if(lista.size() == 0){
-            if(carta.getValor()==1){
-                lista.add(carta);
-                recolocar();
-                palo = carta.getPalo();
-                return true;
-            }
+            lista.add(carta);
+            recolocar(carta);
+            return true;
         }else{
-            if(palo == carta.getPalo())
+            if(lista.get(lista.size()-1).getColor() != carta.getColor()){
                 if(lista.get(lista.size()-1).getValor() == carta.getValor()+1){
                     lista.add(carta);
-                    recolocar();
+                    recolocar(carta);
                     return true;
+                }
             }
         }
         return false;
     } 
+    
     public Carta extraer(){
         return lista.get(lista.size()-1);
     }
-    public void eliminar(){
-        lista.remove(lista.size()-1);
+    public void eliminar(Carta carta){
+        lista.remove(carta);
     }
-    public void recolocar(){
-        lista.get(lista.size()-1).setPosicion(x, POSY);
+    public void recolocar(Carta carta){
+        carta.setPosicion(x, POSY + (lista.size()-1)*30);
     }
     
     public void paint(Graphics gg, Applet applet){
