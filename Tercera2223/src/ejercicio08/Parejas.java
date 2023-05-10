@@ -100,10 +100,8 @@ public class Parejas extends Applet implements Runnable {
     public void run(){
         while(true){
             contador++;
-            System.out.println(contador);
             if(contador == 1000/delay){
                 repaint();
-                
             }
             
             try {
