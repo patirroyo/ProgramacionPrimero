@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ejercicio08;
+package Ejercicio08;
 
 import java.applet.Applet;
 import java.awt.Color;
