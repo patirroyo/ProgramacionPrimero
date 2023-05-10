@@ -28,6 +28,7 @@ public class Parejas extends Applet implements Runnable {
     private Casilla activa2;
     private int contador;
     private int descubiertas;
+    private int fallos;
     
     public void init(){
         this.setSize(SIZEX, SIZEY);
@@ -66,9 +67,8 @@ public class Parejas extends Applet implements Runnable {
     }
     
     public void paint(Graphics g){
-        noseve.setColor(Color.BLACK);
         noseve.fillRect(0, 0, SIZEX, SIZEY);
-
+        noseve.setColor(Color.BLACK);
         descubiertas = 0;
         for(int i = 0; i < FILAS; i++)
              for(int j = 0; j < COLUMNAS; j++){
@@ -76,10 +76,18 @@ public class Parejas extends Applet implements Runnable {
                  if(casillas[i][j].isDescubierta())
                      descubiertas++;
              }
+        
+        noseve.drawString("Fallos: " + fallos, SIZEX-100, SIZEY-10);
+        
         if(descubiertas == 16){
+            noseve.setColor(Color.WHITE);
+            noseve.fillRect(0, 0, SIZEX, SIZEY);
+            noseve.setColor(Color.BLACK);
             noseve.setFont(new Font("Arial", Font.BOLD, 56));
-            noseve.drawString("Has ganado", SIZEX/2-170, SIZEY/2);
+            noseve.drawString("Completado", SIZEX/2-170, SIZEY/2);
+            noseve.drawString("Fallos: " + fallos, SIZEX/2-140, SIZEY/2 + 100);
         }
+        
       
        g.drawImage(imagen, 0, 0, SIZEX, SIZEY, this);
     }
@@ -92,8 +100,11 @@ public class Parejas extends Applet implements Runnable {
     public void run(){
         while(true){
             contador++;
-            if(contador == 1000/delay)
+            System.out.println(contador);
+            if(contador == 1000/delay){
                 repaint();
+                
+            }
             
             try {
                 Thread.sleep(delay);
@@ -103,6 +114,8 @@ public class Parejas extends Applet implements Runnable {
         }
     }
     public boolean mouseDown(Event ev, int x, int y){
+        if(contador < (1000/delay))
+            return false;
         for(int i = 0; i < FILAS; i++)
             for(int j = 0; j < COLUMNAS; j++)
                 if(casillas[i][j].contains(x,y) && activa1 == null && !casillas[i][j].isDescubierta()){
@@ -118,7 +131,7 @@ public class Parejas extends Applet implements Runnable {
     } 
 
     public boolean mouseUp(Event ev, int x, int y){
-        if(activa2 == null)
+        if(activa1 == null || activa2 == null)
             return false;
         if(activa1.getImagen() != activa2.getImagen()){
             activa1.setDescubierta(Boolean.FALSE);
@@ -127,7 +140,7 @@ public class Parejas extends Applet implements Runnable {
         }
         activa1 = null;
         activa2 = null;
-        
+        fallos++;
 
         return true;
     } 
