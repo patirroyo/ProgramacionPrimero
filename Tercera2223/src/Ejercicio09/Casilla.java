@@ -33,8 +33,6 @@ public class Casilla extends Rectangle {
     
     public void paint(Graphics gg, Applet ap){
         if(mina != null&&!tapada){
-            gg.setColor(Color.RED);
-            gg.draw3DRect(x, y, width, height, tapada);
             gg.drawImage(mina, x, y, width, height, ap);
         }
         else{
@@ -55,6 +53,20 @@ public class Casilla extends Rectangle {
                     break;
                 case 4:
                     gg.setColor(Color.BLUE);
+                    break;
+                case 5:
+                    gg.setColor(Color.PINK);
+                    break;
+                case 6:
+                    gg.setColor(Color.ORANGE);
+                    break;
+                case 7:
+                    gg.setColor(Color.MAGENTA);
+                    break;
+                case 8:
+                    gg.setColor(Color.BLACK);
+                    
+                 
             }
             
             gg.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -79,6 +91,10 @@ public class Casilla extends Rectangle {
             conBandera = false;
         else
             conBandera = true;
+    }
+    public void setBandera(Boolean bandera) {
+        conBandera = bandera;
+        
     }
 
     public boolean isMina() {
