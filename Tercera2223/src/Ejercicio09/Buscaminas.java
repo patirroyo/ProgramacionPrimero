@@ -7,10 +7,8 @@ package Ejercicio09;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Event;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
